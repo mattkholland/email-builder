@@ -294,8 +294,7 @@ function toPreview(s){
       return `<table><tr>${row}</tr></table><div class="sp32"></div>`;
     }
     case 'cards': {
-      return `<div class="divider">Spotlight Features</div><div class="sp32"></div>
-        <table><tr>
+      return `<table><tr>
           <td style="width:${card.w}px; padding-right:30px;">
             <img class="thumb285x185" src="${s.data.left.img}" width="${card.w}" height="${card.h}" alt="">
             <div class="txt">
@@ -335,13 +334,19 @@ function toPreview(s){
         </td>
       </tr></table><div class="sp32"></div>`;
     }
-    case 'spotlight': {
-      return `<div class="spotlight" style="background:${esc(s.data.bg)}; color:${esc(s.data.color)}; padding:24px">
-        ${s.data.eyebrow ? `<div style="font-size:12px; font-weight:bold; text-transform:uppercase; margin-bottom:4px">${esc(s.data.eyebrow)}</div>` : ''}
-        <div class="title" style="font-size:${THEME.title.fs}px;line-height:${THEME.title.lh}px;">${esc(s.data.title)}</div>
-        <div class="txt" style="color:${esc(s.data.color)}">${esc(s.data.body)}</div>
-        ${s.data.ctaText ? `<a href="${esc(s.data.ctaUrl)}" style="color:#000">${esc(s.data.ctaText)}</a>` : ''}
-      </div><div class="sp32"></div>`;
+ case "spotlight":
+  return `<table><tr>
+    <td style="width:180px; padding-right:30px;" class="img-target" data-key="imgA" data-idx="${index}">
+      <img src="${s.data.imgA}" width="180" height="237" alt="">
+    </td>
+    <td class="txt" style="background:${s.data.bg}; color:${s.data.textColor}; padding:20px;">
+      <div style="text-transform:uppercase; font-size:13px; margin-bottom:6px;">${escapeHtml(s.data.eyebrow)}</div>
+      <div class="title">${escapeHtml(s.data.title)}</div>
+      ${escapeHtml(s.data.body)}
+      <br><a href="${escapeHtml(s.data.ctaUrl)}" style="color:#000;">${escapeHtml(s.data.ctaText)}</a>
+    </td>
+  </tr></table><div class="spacer32"></div>`;
+
     }
     case 'footer':
       return `<table><tr><td style="background:#161616; color:#fff; text-align:center; padding:36px 16px;">
