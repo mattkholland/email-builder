@@ -14,7 +14,7 @@ export const SECTION_TYPES = {
 
 export function defaultSection(type) {
   // your existing switch() logic goes here
-}
+
 
 const schema = {
   banner: {
@@ -117,3 +117,4 @@ const schema = {
     }
   }
 };
+  }
