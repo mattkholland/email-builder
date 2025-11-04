@@ -11,20 +11,18 @@
     <div class="wrap">
       <h1>Outlook Newsletter Builder</h1>
       <div class="actions">
-        <!-- Adders -->
+        <!-- Adders (approved only) -->
         <button data-add="banner" class="btn">+ Banner</button>
         <button data-add="textonly" class="btn">+ Text-only</button>
         <button data-add="divider" class="btn">+ Divider</button>
-        <!-- REMOVED: textImgR, imgTextL, twoThumbs -->
         <button data-add="s5050" class="btn">+ 50/50</button>
         <button data-add="s5050flip" class="btn">+ 50/50 (flipped)</button>
         <button data-add="cards" class="btn">+ 2 Cards</button>
         <button data-add="spotlight" class="btn">+ Spotlight</button>
         <button data-add="footer" class="btn">+ Footer</button>
         <button data-add="feedback" class="btn">+ Feedback</button>
-        <!-- Export -->
-        <!-- ✅ GREEN EXPORT BUTTON -->
-        <button id="exportHtml" class="btn" style="background:#28a745; color:#fff; border-color:#28a745;">⤓ Export HTML</button>
+        <!-- Export (green) -->
+        <button id="exportHtml" class="btn" style="background:#28a745;color:#fff;border-color:#28a745;">⤓ Export HTML</button>
       </div>
     </div>
   </header>
@@ -72,7 +70,7 @@
           <label>Image</label>
           <input type="file" id="imgAFile" accept="image/*">
           <input type="url" id="imgAUrl" placeholder="or paste image URL">
-          <div class="hint">Tip: use either upload or URL.</div>
+          <div class="hint">Tip: use either upload or URL. You can also click an image in the preview.</div>
         </div>
 
         <div class="row contextual bgcolor-row">
@@ -106,7 +104,7 @@
           <label for="accentColor">Divider color</label>
           <input type="text" id="accentColor" value="#FBE232">
         </div>
-        <!-- ✅ REMOVED EMAIL WIDTH OPTION -->
+        <!-- (Removed Email width control) -->
       </div>
       <div class="field">
         <button id="applyTheme" class="btn">Apply Theme</button>
