@@ -15,17 +15,16 @@
         <button data-add="banner" class="btn">+ Banner</button>
         <button data-add="textonly" class="btn">+ Text-only</button>
         <button data-add="divider" class="btn">+ Divider</button>
-        <button data-add="textImgR" class="btn">+ Text left / Image right</button>
-        <button data-add="imgTextL" class="btn">+ Image left / Text right</button>
+        <!-- REMOVED: textImgR, imgTextL, twoThumbs -->
         <button data-add="s5050" class="btn">+ 50/50</button>
         <button data-add="s5050flip" class="btn">+ 50/50 (flipped)</button>
         <button data-add="cards" class="btn">+ 2 Cards</button>
-        <button data-add="twoThumbs" class="btn">+ 2 Thumbs + Text</button>
         <button data-add="spotlight" class="btn">+ Spotlight</button>
         <button data-add="footer" class="btn">+ Footer</button>
         <button data-add="feedback" class="btn">+ Feedback</button>
         <!-- Export -->
-        <button id="exportHtml" class="btn dark">⤓ Export HTML</button>
+        <!-- ✅ GREEN EXPORT BUTTON -->
+        <button id="exportHtml" class="btn" style="background:#28a745; color:#fff; border-color:#28a745;">⤓ Export HTML</button>
       </div>
     </div>
   </header>
@@ -107,10 +106,7 @@
           <label for="accentColor">Divider color</label>
           <input type="text" id="accentColor" value="#FBE232">
         </div>
-        <div class="field">
-          <label for="maxWidth">Email width (px)</label>
-          <input type="text" id="maxWidth" value="600">
-        </div>
+        <!-- ✅ REMOVED EMAIL WIDTH OPTION -->
       </div>
       <div class="field">
         <button id="applyTheme" class="btn">Apply Theme</button>
