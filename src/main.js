@@ -27,12 +27,20 @@ document.querySelectorAll("[data-add]").forEach((btn) => {
   btn.addEventListener("click", () => {
     const type = btn.getAttribute("data-add");
     const newSection = defaultSection(type);
+
+    // ✅ Safety check: don’t add undefined or bad objects
+    if (!newSection || !newSection.type) {
+      console.warn("Unknown section type:", type);
+      return;
+    }
+
     sections.push(newSection);
     currentIndex = sections.length - 1;
     render();
-    openEditor(currentIndex);
+    openEditor(currentIndex); // keeps behavior consistent
   });
 });
+
 
 // Drag + drop reorder (restored)
 function enableDrag() {
@@ -66,19 +74,20 @@ function enableDrag() {
 }
 
 function render() {
-  // List
+  // ✅ Filter out any undefined or malformed sections
+  sections = sections.filter(s => s && s.type);
+
   list.innerHTML = sections
-    .map(
-      (s, i) => `
+    .map((s, i) => `
       <div class="card" data-idx="${i}">
         <h3>${i + 1}. ${SECTION_TYPES[s.type]}</h3>
         <div class="mini-actions">
           <button data-act="select">Edit</button>
           <button data-act="delete" style="color:#ff6b6b;">Delete</button>
         </div>
-      </div>`
-    )
+      </div>`)
     .join("");
+
 
   // Bind card actions
   list.querySelectorAll(".card").forEach((card) => {
