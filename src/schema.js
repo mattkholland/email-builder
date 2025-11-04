@@ -1,69 +1,103 @@
-// THEME & SIZES (single source of truth)
-window.THEME = {
-  width: 600,
-  accent: '#FBE232',
-  ctaColor: '#007da3',    // default CTA color
-  title: { fs: 18, lh: 20, margin: 10 },
-  body:  { fs: 14, lh: 18 },
-  sizes: {
-    banner: { w: 600, h: 200 }, // height-locked
-    half:   { w: 285, h: 185 }, // 50/50 images
-    card:   { w: 285, h: 185 }, // cards images
-    spot:   { w: 180, h: 200 }  // spotlight thumbnail if used
-  }
-};
+// Section schema (approved set only)
 
-// Section type labels
-window.TYPES = {
-  banner:'Banner',
-  textonly:'Text-only',
-  divider:'Divider',
-  s5050:'50/50',
-  s5050flip:'50/50 (flipped)',
-  cards:'2 Cards',
+const schema = {
+  banner: {
+    label: "Banner",
+    defaults: {
+      imgA: "https://placehold.co/600x200/png",
+      alt: "Banner"
+    }
+  },
+
+  textonly: {
+    label: "Text-only",
+    defaults: {
+      title: "[Headline]",
+      body: "[Body copy goes here. Keep it concise and scannable.]",
+      ctaText: "Learn more →",
+      ctaUrl: "#"
+    }
+  },
+
+  divider: {
+    label: "Divider",
+    defaults: {
+      label: "SECTION TITLE"
+    }
+  },
+
+  s5050: {
+    label: "50/50",
+    defaults: {
+      title: "[Section Title]",
+      body: "[Short description text.]",
+      ctaText: "Learn more →",
+      ctaUrl: "#",
+      imgA: "https://placehold.co/285x185/png",
+      flipped: false
+    }
+  },
+
+  s5050flip: {
+    label: "50/50 (flipped)",
+    defaults: {
+      title: "[Section Title]",
+      body: "[Short description text.]",
+      ctaText: "Learn more →",
+      ctaUrl: "#",
+      imgA: "https://placehold.co/285x185/png",
+      flipped: true
+    }
+  },
+
+  cards: {
+    label: "2 Cards",
+    defaults: {
+      left: {
+        img: "https://placehold.co/285x185/png",
+        title: "[Card Title]",
+        body: "Short supporting copy for the left card.",
+        ctaText: "Details →",
+        ctaUrl: "#"
+      },
+      right: {
+        img: "https://placehold.co/285x185/png",
+        title: "[Card Title]",
+        body: "Short supporting copy for the right card.",
+        ctaText: "Details →",
+        ctaUrl: "#"
+      }
+      // ✅ No divider in this section
+    }
+  },
 
   spotlight: {
-  label: "Spotlight",
-  defaults: {
-    eyebrow: "FEATURED",
-    title: "[Spotlight Title]",
-    body: "[Brief supporting text here.]",
-    imgA: "https://placehold.co/180x237/png",
-    bg: "#fbe232",
-    textColor: "#000000",
-    ctaText: "Learn more →",
-    ctaUrl: "#"
-  }
-},
-  
-  footer:'Footer',
-  feedback:'Feedback'
-};
+    label: "Spotlight",
+    defaults: {
+      eyebrow: "FEATURED",
+      title: "[Spotlight Title]",
+      body: "Brief supporting text.",
+      imgA: "https://placehold.co/180x237/png",  // 180x237 left thumbnail
+      bg: "#fbe232",
+      textColor: "#000000",
+      ctaText: "Learn more →",
+      ctaUrl: "#"
+    }
+  },
 
-// Default placeholders
-window.PH = {
-  banner: `https://placehold.co/${THEME.sizes.banner.w}x${THEME.sizes.banner.h}/png`,
-  half:   `https://placehold.co/${THEME.sizes.half.w}x${THEME.sizes.half.h}/png`,
-  card:   `https://placehold.co/${THEME.sizes.card.w}x${THEME.sizes.card.h}/png`,
-  twol:   `https://placehold.co/284x164/png`,
-  twor:   `https://placehold.co/284x164/png`
-};
+  footer: {
+    label: "Footer",
+    defaults: {
+      logo: "[Logo]",
+      fourCs: "[4c's]"
+    }
+  },
 
-// Section factories (clean defaults)
-window.factory = function(type){
-  switch(type){
-    case 'banner':     return { type, data:{ src:PH.banner, alt:'Banner' } };
-    case 'textonly':   return { type, data:{ title:'[Headline]', body:'[Intro text]', ctaText:'', ctaUrl:'' } };
-    case 'divider':    return { type, data:{ label:'SECTION TITLE' } };
-    case 'textImgR':   return { type, data:{ title:'[Title]', body:'[Description]', ctaText:'Learn more →', ctaUrl:'#', imgA:PH.half } };
-    case 'imgTextL':   return { type, data:{ title:'[Title]', body:'[Description]', ctaText:'Read more →',  ctaUrl:'#', imgA:PH.half } };
-    case 's5050':      return { type, data:{ title:'[50/50 Title]', body:'[Copy]', ctaText:'Read more →',  ctaUrl:'#', imgA:PH.half, flip:false } };
-    case 's5050flip':  return { type, data:{ title:'[50/50 Title]', body:'[Copy]', ctaText:'Learn more →', ctaUrl:'#', imgA:PH.half, flip:true } };
-    case 'cards':      return { type, data:{ left:{ img:PH.card, title:'[Card Left]', body:'[Short copy]', ctaText:'Details →', ctaUrl:'#' }, right:{ img:PH.card, title:'[Card Right]', body:'[Short copy]', ctaText:'Details →', ctaUrl:'#' } } };
-    case 'twoThumbs':  return { type, data:{ left:{ img:PH.twol, title:'[Item One]', body:'[Description]', ctaText:'Details →', ctaUrl:'#' }, right:{ img:PH.twor, title:'[Item Two]', body:'[Description]', ctaText:'Details →', ctaUrl:'#' } } };
-    case 'spotlight':  return { type, data:{ eyebrow:'EYEBROW', title:'[Spotlight Title]', body:'[Spotlight copy]', ctaText:'Learn more →', ctaUrl:'#', bg:'#fbe232', color:'#000000' } };
-    case 'footer':     return { type, data:{ logo:'[Logo]', fourCs:"[4c's]" } };
-    case 'feedback':   return { type, data:{ lead:'Questions? Ideas? Feedback?', email:'name@email.com' } };
+  feedback: {
+    label: "Feedback",
+    defaults: {
+      lead: "Questions? Ideas? Feedback?",
+      email: "name@email.com"
+    }
   }
-  return { type, data:{} };
 };
