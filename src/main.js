@@ -240,23 +240,45 @@ function toPreview(s, i) {
 
     case "s5050":
     case "s5050flip": {
-      var flipped = !!s.data.flipped;
-      // When flipped, image sits flush to the right edge (no outer padding)
-      var imgCellLeft  = '<td style="width:285px; padding-right:30px;"><img src="' + s.data.imgA + '" width="285" height="185" alt=""></td>';
-      var imgCellRight = '<td style="width:285px; padding-right:0;" align="right"><img src="' + s.data.imgA + '" width="285" height="185" alt=""></td>';
-      var txtCell =
-        '<td class="txt" style="width:285px;">' +
-        '<div class="title">' + escapeHtml(s.data.title) + '</div>' +
-        escapeHtml(s.data.body) +
-        '<br><a href="' + escapeHtml(s.data.ctaUrl || "#") + '" style="color:#007da3;">' + escapeHtml(s.data.ctaText || "") + '</a>' +
-        "</td>";
-      if (flipped) {
-        html = "<table><tr>" + txtCell + imgCellRight + "</tr></table><div class=\"spacer32\"></div>";
-      } else {
-        html = "<table><tr>" + imgCellLeft + txtCell + "</tr></table><div class=\"spacer32\"></div>";
-      }
+      const flipped = (s.type === "s5050flip") || !!s.data.flipped;
+
+      const titleRow =
+        '<tr><td colspan="2" class="txt">' +
+          '<div class="title" style="margin:10px 0;">' + escapeHtml(s.data.title || "") + '</div>' +
+        '</td></tr>';
+
+      // image cells
+      const imgLeft  =
+        '<td style="width:285px; padding-right:30px; vertical-align:top;">' +
+          '<img src="' + (s.data.imgA || "https://placehold.co/285x185/png") + '" width="285" height="185" alt="">' +
+        '</td>';
+
+      // flush to right edge when the image is on the right
+      const imgRight =
+        '<td style="width:285px; padding-right:0; vertical-align:top;" align="right">' +
+          '<img src="' + (s.data.imgA || "https://placehold.co/285x185/png") + '" width="285" height="185" alt="">' +
+        '</td>';
+
+      const textCell =
+        '<td class="txt" style="width:285px; vertical-align:top;">' +
+          // body + CTA (CTA has 10px top)
+          escapeHtml(s.data.body || "") +
+          '<br><a href="' + escapeHtml(s.data.ctaUrl || "#") + '" style="color:#007da3; display:inline-block; margin-top:10px;">' +
+            escapeHtml(s.data.ctaText || "") +
+          '</a>' +
+        '</td>';
+
+      const row = flipped ? (textCell + imgRight) : (imgLeft + textCell);
+
+      html =
+        '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' +
+          titleRow +
+          '<tr>' + row + '</tr>' +
+        '</table>' +
+        '<div class="spacer32"></div>';
       break;
     }
+
 
     case "cards":
       html =
@@ -373,16 +395,17 @@ document.getElementById("exportHtml").addEventListener("click", function () {
   var rows = previewEl.innerHTML;
   var accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#FBE232";
   var doc = '<!DOCTYPE html><html lang="en"><head>' +
-    '<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">' +
-    "<title>Newsletter</title>" +
+    ...
     "<style>" +
-    "body{margin:0;padding:0;background:#ffffff;}" +
+    "body{margin:0;padding:0;background:#ffffff;font-family:Arial, Helvetica, sans-serif;}" + /* enforce Arial base */
     ".email{width:600px;margin:0 auto;background:#ffffff;}" +
     ".txt{font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:18px;color:#333;}" +
-    ".title{font-size:18px;line-height:20px;font-weight:bold;margin:10px 0;color:#111;}" +
-    ".divider{background:" + accent + ";color:#000;font-weight:bold;text-transform:uppercase;font-size:13px;padding:6px 10px;}" +
-    "a{color:#007da3;text-decoration:none;}" +
+    ".title{font-size:18px;line-height:20px;font-weight:bold;margin:10px 0;color:#111;font-family:Arial, Helvetica, sans-serif;}" +
+    ".divider{background:" + accent + ";color:#000;font-weight:bold;text-transform:uppercase;font-size:13px;padding:6px 10px;font-family:Arial, Helvetica, sans-serif;}" + /* fix Times fallback */
+    ".spacer32{height:32px;line-height:0;font-size:0;display:block;}" + /* guarantees space between sections */
+    "a{color:#007da3;text-decoration:none;font-family:Arial, Helvetica, sans-serif;}" +
     "</style></head><body><div class=\"email\">" + rows + "</div></body></html>";
+
 
   var blob = new Blob([doc], { type: "text/html" });
   var url = URL.createObjectURL(blob);
