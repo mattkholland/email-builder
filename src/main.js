@@ -29,15 +29,11 @@ function esc(s){ return String(s ?? '').replace(/[&<>"]/g, c=>({ '&':'&amp;','<'
 function normUrl(u){ if(!u) return u; if(/^https?:\/\//i.test(u)) return u; return 'https://' + u.replace(/^\/+/, ''); }
 
 /* Adders (top bar) */
-document.querySelectorAll('[data-add]').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const type = btn.getAttribute('data-add');
-    const s = factory(type);
-    state.sections.push(s);
-    state.cur = state.sections.length - 1;
-    render();
-  });
+// Button actions
+document.querySelectorAll("[data-add]").forEach(btn => {
+  btn.addEventListener("click", () => addSection(btn.dataset.add));
 });
+
 
 /* Export button */
 $('#exportHtml').addEventListener('click', ()=>{
