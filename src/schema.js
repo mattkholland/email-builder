@@ -1,5 +1,21 @@
 // Section schema (approved set only)
 
+export const SECTION_TYPES = {
+  banner: "Banner",
+  textonly: "Text-only",
+  divider: "Divider",
+  s5050: "50/50",
+  s5050flip: "50/50 (flipped)",
+  cards: "2 Cards",
+  spotlight: "Spotlight",
+  footer: "Footer",
+  feedback: "Feedback",
+};
+
+export function defaultSection(type) {
+  // your existing switch() logic goes here
+}
+
 const schema = {
   banner: {
     label: "Banner",
