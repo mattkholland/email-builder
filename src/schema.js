@@ -45,7 +45,6 @@ window.PH = {
   banner: `https://placehold.co/${THEME.sizes.banner.w}x${THEME.sizes.banner.h}/png`,
   half:   `https://placehold.co/${THEME.sizes.half.w}x${THEME.sizes.half.h}/png`,
   card:   `https://placehold.co/${THEME.sizes.card.w}x${THEME.sizes.card.h}/png`,
-  :   `https://placehold.co/${THEME.sizes..w}x${THEME.sizes..h}/png`,
   twol:   `https://placehold.co/284x164/png`,
   twor:   `https://placehold.co/284x164/png`
 };
