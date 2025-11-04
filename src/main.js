@@ -1,4 +1,4 @@
-// Outlook Newsletter Builder — main.js
+// Outlook Newsletter Builder — main.js (clean, no ellipses)
 
 const state = {
   sections: [],
@@ -169,7 +169,7 @@ async function applyChanges() {
     s.data.ctaText = ctaText;
     s.data.ctaUrl = ctaUrl;
     s.data.imgA = finalImg || s.data.imgA;
-    s.data.flipped = !!flip5050;
+    s.data.flipped = (s.type === "s5050flip") ? true : !!flip5050;
   } else if (s.type === "cards") {
     if (title) s.data.left.title = title;
     s.data.left.body = body;
@@ -227,9 +227,9 @@ function toPreview(s, i) {
     case "textonly":
       html =
         "<table><tr><td class=\"txt\">" +
-        "<div class=\"title\">" + escapeHtml(s.data.title) + "</div>" +
+        "<div class=\"title\" style=\"margin:10px 0;\">" + escapeHtml(s.data.title) + "</div>" +
         escapeHtml(s.data.body) +
-        "<br><a href=\"" + escapeHtml(s.data.ctaUrl || "#") + "\" style=\"color:#007da3;\">" + escapeHtml(s.data.ctaText || "") + "</a>" +
+        "<br><a href=\"" + escapeHtml(s.data.ctaUrl || "#") + "\" style=\"color:#007da3; display:inline-block; margin-top:10px;\">" + escapeHtml(s.data.ctaText || "") + "</a>" +
         "</td></tr></table><div class=\"spacer32\"></div>";
       break;
 
@@ -240,35 +240,32 @@ function toPreview(s, i) {
 
     case "s5050":
     case "s5050flip": {
-      const flipped = (s.type === "s5050flip") || !!s.data.flipped;
+      var flipped = (s.type === "s5050flip") || !!s.data.flipped;
 
-      const titleRow =
+      var titleRow =
         '<tr><td colspan="2" class="txt">' +
           '<div class="title" style="margin:10px 0;">' + escapeHtml(s.data.title || "") + '</div>' +
         '</td></tr>';
 
-      // image cells
-      const imgLeft  =
+      var imgLeft  =
         '<td style="width:285px; padding-right:30px; vertical-align:top;">' +
           '<img src="' + (s.data.imgA || "https://placehold.co/285x185/png") + '" width="285" height="185" alt="">' +
         '</td>';
 
-      // flush to right edge when the image is on the right
-      const imgRight =
+      var imgRight =
         '<td style="width:285px; padding-right:0; vertical-align:top;" align="right">' +
           '<img src="' + (s.data.imgA || "https://placehold.co/285x185/png") + '" width="285" height="185" alt="">' +
         '</td>';
 
-      const textCell =
+      var textCell =
         '<td class="txt" style="width:285px; vertical-align:top;">' +
-          // body + CTA (CTA has 10px top)
           escapeHtml(s.data.body || "") +
           '<br><a href="' + escapeHtml(s.data.ctaUrl || "#") + '" style="color:#007da3; display:inline-block; margin-top:10px;">' +
             escapeHtml(s.data.ctaText || "") +
           '</a>' +
         '</td>';
 
-      const row = flipped ? (textCell + imgRight) : (imgLeft + textCell);
+      var row = flipped ? (textCell + imgRight) : (imgLeft + textCell);
 
       html =
         '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' +
@@ -279,48 +276,57 @@ function toPreview(s, i) {
       break;
     }
 
-
     case "cards":
       html =
         "<table><tr>" +
-          '<td style="width:285px; padding-right:30px;">' +
+          '<td style="width:285px; padding-right:30px; vertical-align:top;">' +
             '<img src="' + s.data.left.img + '" width="285" height="185" alt="">' +
             '<div class="txt">' +
-              '<div class="title">' + escapeHtml(s.data.left.title) + "</div>" +
+              '<div class="title" style="margin:10px 0;">' + escapeHtml(s.data.left.title) + "</div>" +
               escapeHtml(s.data.left.body) +
-              '<br><a href="' + escapeHtml(s.data.left.ctaUrl || "#") + '" style="color:#007da3;">' + escapeHtml(s.data.left.ctaText || "") + "</a>" +
+              '<br><a href="' + escapeHtml(s.data.left.ctaUrl || "#") + '" style="color:#007da3; display:inline-block; margin-top:10px;">' + escapeHtml(s.data.left.ctaText || "") + "</a>" +
             "</div>" +
           "</td>" +
-          '<td style="width:285px;">' +
+          '<td style="width:285px; vertical-align:top;">' +
             '<img src="' + s.data.right.img + '" width="285" height="185" alt="">' +
             '<div class="txt">' +
-              '<div class="title">' + escapeHtml(s.data.right.title) + "</div>" +
+              '<div class="title" style="margin:10px 0;">' + escapeHtml(s.data.right.title) + "</div>" +
               escapeHtml(s.data.right.body) +
-              '<br><a href="' + escapeHtml(s.data.right.ctaUrl || "#") + '" style="color:#007da3;">' + escapeHtml(s.data.right.ctaText || "") + "</a>" +
+              '<br><a href="' + escapeHtml(s.data.right.ctaUrl || "#") + '" style="color:#007da3; display:inline-block; margin-top:10px;">' + escapeHtml(s.data.right.ctaText || "") + "</a>" +
             "</div>" +
           "</td>" +
         "</tr></table><div class=\"spacer32\"></div>";
       break;
 
-    case "spotlight":
-      // Full-width yellow background, black text, left thumb 180x237, text on the right
+    case "spotlight": {
+      var bg = s.data.bg || "#fbe232";
+      var text = s.data.textColor || "#000";
+      var eyebrow = escapeHtml(s.data.eyebrow || "FEATURED");
+      var title = escapeHtml(s.data.title || "[Spotlight Title]");
+      var body  = escapeHtml(s.data.body  || "Brief supporting text.");
+      var ctaT  = escapeHtml(s.data.ctaText || "Learn more →");
+      var ctaU  = escapeHtml(s.data.ctaUrl  || "#");
+      var img   = s.data.imgA || "https://placehold.co/180x237/cccccc/888888.png?text=180×237";
+
       html =
-        '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fbe232; color:#000;">' +
-          '<tr><td style="padding:24px;">' +
+        '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:' + bg + '; color:' + text + ';">' +
+          '<tr><td style="padding:40px;">' +
             '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>' +
-              '<td style="width:180px; padding-right:30px;" class="img-target" data-key="imgA" data-idx="' + i + '">' +
-                '<img src="' + (s.data.imgA || "https://placehold.co/180x237/png") + '" width="180" height="237" alt="">' +
+              '<td class="img-target" data-key="imgA" data-idx="' + i + '" style="width:180px; padding-right:60px; vertical-align:top;">' +
+                '<img src="' + img + '" width="180" height="237" alt="" style="display:block; width:180px; height:237px; border:0; outline:0;">' +
               '</td>' +
-              '<td class="txt" style="color:#000;">' +
-                '<div style="text-transform:uppercase; font-size:13px; margin-bottom:6px;">' + escapeHtml(s.data.eyebrow || "") + "</div>" +
-                '<div class="title" style="color:#000;">' + escapeHtml(s.data.title || "") + "</div>" +
-                '<span style="color:#000;">' + escapeHtml(s.data.body || "") + "</span>" +
-                '<br><a href="' + escapeHtml(s.data.ctaUrl || "#") + '" style="color:#000;">' + escapeHtml(s.data.ctaText || "") + "</a>" +
-              "</td>" +
-            "</tr></table>" +
-          "</td></tr>'" +
-        "</table><div class=\"spacer32\"></div>";
+              '<td class="txt" style="vertical-align:top; color:' + text + ';">' +
+                '<div style="text-transform:uppercase; font-size:13px; line-height:18px; margin:0 0 10px 0;">' + eyebrow + '</div>' +
+                '<div class="title" style="color:' + text + '; margin:10px 0;">' + title + '</div>' +
+                '<div style="font-size:14px; line-height:18px; color:' + text + '; margin:0;">' + body + '</div>' +
+                '<div><a href="' + ctaU + '" style="color:#000; text-decoration:none; display:inline-block; margin-top:10px;">' + ctaT + '</a></div>' +
+              '</td>' +
+            '</tr></table>' +
+          '</td></tr>' +
+        '</table>' +
+        '<div class="spacer32"></div>';
       break;
+    }
 
     case "footer":
       html =
@@ -395,17 +401,17 @@ document.getElementById("exportHtml").addEventListener("click", function () {
   var rows = previewEl.innerHTML;
   var accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#FBE232";
   var doc = '<!DOCTYPE html><html lang="en"><head>' +
-    ...
+    '<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+    "<title>Newsletter</title>" +
     "<style>" +
-    "body{margin:0;padding:0;background:#ffffff;font-family:Arial, Helvetica, sans-serif;}" + /* enforce Arial base */
+    "body{margin:0;padding:0;background:#ffffff;font-family:Arial, Helvetica, sans-serif;}" +
     ".email{width:600px;margin:0 auto;background:#ffffff;}" +
     ".txt{font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:18px;color:#333;}" +
     ".title{font-size:18px;line-height:20px;font-weight:bold;margin:10px 0;color:#111;font-family:Arial, Helvetica, sans-serif;}" +
-    ".divider{background:" + accent + ";color:#000;font-weight:bold;text-transform:uppercase;font-size:13px;padding:6px 10px;font-family:Arial, Helvetica, sans-serif;}" + /* fix Times fallback */
-    ".spacer32{height:32px;line-height:0;font-size:0;display:block;}" + /* guarantees space between sections */
+    ".divider{background:" + accent + ";color:#000;font-weight:bold;text-transform:uppercase;font-size:13px;padding:6px 10px;font-family:Arial, Helvetica, sans-serif;}" +
+    ".spacer32{height:32px;line-height:0;font-size:0;display:block;}" +
     "a{color:#007da3;text-decoration:none;font-family:Arial, Helvetica, sans-serif;}" +
     "</style></head><body><div class=\"email\">" + rows + "</div></body></html>";
-
 
   var blob = new Blob([doc], { type: "text/html" });
   var url = URL.createObjectURL(blob);
