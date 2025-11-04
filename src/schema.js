@@ -18,12 +18,9 @@ window.TYPES = {
   banner:'Banner',
   textonly:'Text-only',
   divider:'Divider',
-  textImgR:'Text left / Image right',
-  imgTextL:'Image left / Text right',
   s5050:'50/50',
   s5050flip:'50/50 (flipped)',
   cards:'2 Cards',
-  twoThumbs:'2 Thumbs + Text',
   spotlight:'Spotlight',
   footer:'Footer',
   feedback:'Feedback'
