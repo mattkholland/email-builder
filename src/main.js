@@ -34,6 +34,13 @@ document.querySelectorAll("[data-add]").forEach(btn => {
   btn.addEventListener("click", () => addSection(btn.dataset.add));
 });
 
+function addSection(type) {
+  const schemaItem = schema[type];
+  if (!schemaItem) return alert(`Unknown section type: ${type}`);
+  const newSection = JSON.parse(JSON.stringify(schemaItem.defaults));
+  state.sections.push({ type, data: newSection });
+  render();
+}
 
 /* Export button */
 $('#exportHtml').addEventListener('click', ()=>{
