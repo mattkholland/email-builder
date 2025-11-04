@@ -393,34 +393,247 @@ function setImage(idx, key, dataUrl) {
   }
   renderPreview();
 }
+// --- Outlook-safe section renderer for export only (fixed 600px, no margins) ---
+function toOutlookHtmlSection(s, accent) {
+  // Spacer row (use between sections)
+  const spacer32 = '<tr><td height="32" style="height:32px; line-height:32px; font-size:0; mso-line-height-rule:exactly;">&nbsp;</td></tr>';
+
+  // util
+  const esc = (t)=>String(t||'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  let block = '';
+  switch (s.type) {
+    case 'banner': {
+      const src = s.data.imgA || 'https://placehold.co/600x200/png';
+      block =
+        '<tr><td style="padding:0;">' +
+          '<img src="' + esc(src) + '" width="600" height="200" alt="'+esc(s.data.alt||'Banner')+'" style="display:block; width:600px; height:200px; border:0; outline:0;">' +
+        '</td></tr>' + spacer32;
+      break;
+    }
+
+    case 'textonly': {
+      const title = esc(s.data.title || '');
+      const body  = esc(s.data.body  || '');
+      const ctaT  = esc(s.data.ctaText || '');
+      const ctaU  = esc(s.data.ctaUrl  || '#');
+
+      block =
+        '<tr><td style="padding:0 0 0 0;">' +
+          '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
+            // Title with 10px before/after via padding on its own row
+            '<tr><td style="padding:10px 0; font-family:Arial, Helvetica, sans-serif; font-size:18px; line-height:20px; font-weight:bold; color:#111;">' + title + '</td></tr>' +
+            // Body (no margins)
+            '<tr><td style="padding:0; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">' + body + '</td></tr>' +
+            // CTA with 10px top padding
+            (ctaT ? ('<tr><td style="padding:10px 0 0 0;"><a href="' + ctaU + '" style="color:#007da3; text-decoration:none; font-family:Arial, Helvetica, sans-serif;">' + ctaT + '</a></td></tr>') : '') +
+          '</table>' +
+        '</td></tr>' + spacer32;
+      break;
+    }
+
+    case 'divider': {
+      const label = esc(s.data.label || 'SECTION');
+      block =
+        '<tr><td style="padding:0;">' +
+          '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' +
+            '<tr><td style="background:' + esc(accent) + '; color:#000; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:18px; text-transform:uppercase; font-weight:bold; padding:6px 10px;">' + label + '</td></tr>' +
+          '</table>' +
+        '</td></tr>' + spacer32;
+      break;
+    }
+
+    case 's5050':
+    case 's5050flip': {
+      const flipped = (s.type === 's5050flip') || !!s.data.flipped;
+      const img = esc(s.data.imgA || 'https://placehold.co/285x185/png');
+      const title = esc(s.data.title || '');
+      const body  = esc(s.data.body  || '');
+      const ctaT  = esc(s.data.ctaText || '');
+      const ctaU  = esc(s.data.ctaUrl  || '#');
+
+      const imgLeft =
+        '<td width="285" valign="top" style="padding-right:30px;">' +
+          '<img src="' + img + '" width="285" height="185" alt="" style="display:block; width:285px; height:185px; border:0;">' +
+        '</td>';
+      const imgRight =
+        '<td width="285" valign="top" align="right" style="padding-right:0;">' +
+          '<img src="' + img + '" width="285" height="185" alt="" style="display:block; width:285px; height:185px; border:0;">' +
+        '</td>';
+      const textCell =
+        '<td width="285" valign="top" style="padding:0; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">' +
+          // Body
+          body +
+          // CTA
+          (ctaT ? ('<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="padding-top:10px;"><a href="' + ctaU + '" style="color:#007da3; text-decoration:none; font-family:Arial, Helvetica, sans-serif;">' + ctaT + '</a></td></tr></table>') : '') +
+        '</td>';
+
+      const rowCols = flipped ? (textCell + imgRight) : (imgLeft + textCell);
+
+      block =
+        // Title row first (spanning both cols) with 10px top/bottom via padding
+        '<tr><td style="padding:0;">' +
+          '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
+            '<tr><td colspan="2" style="padding:10px 0; font-family:Arial, Helvetica, sans-serif; font-size:18px; line-height:20px; font-weight:bold; color:#111;">' + title + '</td></tr>' +
+            '<tr>' + rowCols + '</tr>' +
+          '</table>' +
+        '</td></tr>' + spacer32;
+      break;
+    }
+
+    case 'cards': {
+      const L = s.data.left  || {};
+      const R = s.data.right || {};
+      const lImg = esc(L.img || 'https://placehold.co/285x185/png');
+      const rImg = esc(R.img || 'https://placehold.co/285x185/png');
+
+      block =
+        '<tr><td style="padding:0;">' +
+          '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
+            '<tr>' +
+              // LEFT
+              '<td width="285" valign="top" style="padding-right:30px;">' +
+                '<img src="' + lImg + '" width="285" height="185" alt="" style="display:block; width:285px; height:185px; border:0;">' +
+                '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
+                  // Title: 10px before/after via padding
+                  '<tr><td style="padding:10px 0; font-family:Arial, Helvetica, sans-serif; font-size:18px; line-height:20px; font-weight:bold; color:#111;">' + esc(L.title || '') + '</td></tr>' +
+                  // Body: no space above
+                  '<tr><td style="padding:0; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">' + esc(L.body || '') + '</td></tr>' +
+                  // CTA: 10px top
+                  (L.ctaText ? ('<tr><td style="padding-top:10px;"><a href="' + esc(L.ctaUrl || '#') + '" style="color:#007da3; text-decoration:none; font-family:Arial, Helvetica, sans-serif;">' + esc(L.ctaText) + '</a></td></tr>') : '') +
+                '</table>' +
+              '</td>' +
+              // RIGHT
+              '<td width="285" valign="top" style="padding:0;">' +
+                '<img src="' + rImg + '" width="285" height="185" alt="" style="display:block; width:285px; height:185px; border:0;">' +
+                '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
+                  '<tr><td style="padding:10px 0; font-family:Arial, Helvetica, sans-serif; font-size:18px; line-height:20px; font-weight:bold; color:#111;">' + esc(R.title || '') + '</td></tr>' +
+                  '<tr><td style="padding:0; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">' + esc(R.body || '') + '</td></tr>' +
+                  (R.ctaText ? ('<tr><td style="padding-top:10px;"><a href="' + esc(R.ctaUrl || '#') + '" style="color:#007da3; text-decoration:none; font-family:Arial, Helvetica, sans-serif;">' + esc(R.ctaText) + '</a></td></tr>') : '') +
+                '</table>' +
+              '</td>' +
+            '</tr>' +
+          '</table>' +
+        '</td></tr>' + spacer32;
+      break;
+    }
+
+    case 'spotlight': {
+      const bg   = esc(s.data.bg || '#fbe232');
+      const fg   = esc(s.data.textColor || '#000');
+      const eye  = esc(s.data.eyebrow || 'FEATURED');
+      const ttl  = esc(s.data.title || '[Spotlight Title]');
+      const body = esc(s.data.body  || 'Brief supporting text.');
+      const ctaT = esc(s.data.ctaText || 'Learn more →');
+      const ctaU = esc(s.data.ctaUrl  || '#');
+      const img  = esc(s.data.imgA || 'https://placehold.co/180x237/cccccc/888888.png?text=180×237');
+
+      block =
+        '<tr><td style="padding:0;">' +
+          '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:' + bg + ';">' +
+            '<tr><td style="padding:40px;">' +
+              '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr>' +
+                // thumb left
+                '<td width="180" valign="top" style="padding-right:60px;">' +
+                  '<img src="' + img + '" width="180" height="237" alt="" style="display:block; width:180px; height:237px; border:0;">' +
+                '</td>' +
+                // copy right
+                '<td valign="top" style="padding:0; color:' + fg + ';">' +
+                  '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
+                    // eyebrow
+                    '<tr><td style="padding:0 0 10px 0; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:18px; text-transform:uppercase; color:' + fg + ';">' + eye + '</td></tr>' +
+                    // title 10px top/bottom
+                    '<tr><td style="padding:10px 0; font-family:Arial, Helvetica, sans-serif; font-size:18px; line-height:20px; font-weight:bold; color:' + fg + ';">' + ttl + '</td></tr>' +
+                    // body
+                    '<tr><td style="padding:0; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:' + fg + ';">' + body + '</td></tr>' +
+                    // CTA (black)
+                    (ctaT ? ('<tr><td style="padding-top:10px;"><a href="' + ctaU + '" style="color:#000; text-decoration:none; font-family:Arial, Helvetica, sans-serif;">' + ctaT + '</a></td></tr>') : '') +
+                  '</table>' +
+                '</td>' +
+              '</tr></table>' +
+            '</td></tr>' +
+          '</table>' +
+        '</td></tr>' + spacer32;
+      break;
+    }
+
+    case 'footer': {
+      const logo  = esc(s.data.logo  || '[Logo]');
+      const fourC = esc(s.data.fourCs|| "[4c's]");
+      block =
+        '<tr><td style="padding:0;">' +
+          '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">' +
+            '<tr><td align="center" style="background:#161616; color:#ffffff; padding:36px 16px; font-family:Arial, Helvetica, sans-serif;">' +
+              '<div style="font-size:14px; line-height:20px; margin:0 0 8px 0;"><strong>' + logo + '</strong></div>' +
+              '<div style="font-size:12px; line-height:18px; margin:0;">' + fourC + '</div>' +
+            '</td></tr>' +
+          '</table>' +
+        '</td></tr>';
+      break;
+    }
+
+    case 'feedback': {
+      const lead = esc(s.data.lead || 'Questions? Ideas? Feedback?');
+      const mail = esc(s.data.email|| 'name@email.com');
+      block =
+        '<tr><td align="center" style="padding:24px 0 32px 0; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#333;">' +
+          '<strong>' + lead + '</strong><br>We’d love to hear it — please email <a href="mailto:' + mail + '" style="color:#007da3; text-decoration:none; font-family:Arial, Helvetica, sans-serif;">' + mail + '</a>' +
+        '</td></tr>';
+      break;
+    }
+  }
+  return block;
+}
 
 // -----------------------------
 // Export HTML (uses current preview markup)
 // -----------------------------
-document.getElementById("exportHtml").addEventListener("click", function () {
-  var rows = previewEl.innerHTML;
-  var accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#FBE232";
-  var doc = '<!DOCTYPE html><html lang="en"><head>' +
-    '<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">' +
-    "<title>Newsletter</title>" +
-    "<style>" +
-    "body{margin:0;padding:0;background:#ffffff;font-family:Arial, Helvetica, sans-serif;}" +
-    ".email{width:600px;margin:0 auto;background:#ffffff;}" +
-    ".txt{font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:18px;color:#333;}" +
-    ".title{font-size:18px;line-height:20px;font-weight:bold;margin:10px 0;color:#111;font-family:Arial, Helvetica, sans-serif;}" +
-    ".divider{background:" + accent + ";color:#000;font-weight:bold;text-transform:uppercase;font-size:13px;padding:6px 10px;font-family:Arial, Helvetica, sans-serif;}" +
-    ".spacer32{height:32px;line-height:0;font-size:0;display:block;}" +
-    "a{color:#007da3;text-decoration:none;font-family:Arial, Helvetica, sans-serif;}" +
-    "</style></head><body><div class=\"email\">" + rows + "</div></body></html>";
+// --- Export HTML (Outlook friendly, 600px fixed, border+padding, table spacers) ---
+document.getElementById('exportHtml').addEventListener('click', function () {
+  var accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#FBE232';
 
-  var blob = new Blob([doc], { type: "text/html" });
+  // Build section rows using Outlook-safe renderer
+  var rows = state.sections.map(function (s) {
+    return toOutlookHtmlSection(s, accent);
+  }).join('');
+
+  // Full HTML: 600px table centered, 1px subtle border, 6px inner padding wrapper table
+  var doc =
+    '<!DOCTYPE html>' +
+    '<html lang="en"><head>' +
+      '<meta charset="utf-8">' +
+      '<meta name="x-apple-disable-message-reformatting">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+      '<title>Newsletter</title>' +
+      '<!--[if mso]><style>* { font-family: Arial, Helvetica, sans-serif !important; }</style><![endif]-->' +
+    '</head>' +
+    '<body style="margin:0; padding:0; background:#ffffff; font-family:Arial, Helvetica, sans-serif;">' +
+      // outer full-width
+      '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#ffffff;"><tr><td align="center" style="padding:0;">' +
+
+        // wrapper around the email: border + 6px inner padding
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px; border:1px solid #e5e5e5; background:#ffffff;"><tr><td style="padding:6px;">' +
+
+          // the actual email content table (fixed 600px)
+          '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px; border-collapse:collapse;">' +
+            rows +
+          '</table>' +
+
+        '</td></tr></table>' +
+
+      '</td></tr></table>' +
+    '</body></html>';
+
+  var blob = new Blob([doc], { type: 'text/html' });
   var url = URL.createObjectURL(blob);
-  var a = document.createElement("a");
+  var a = document.createElement('a');
   a.href = url;
-  a.download = "newsletter.html";
+  a.download = 'newsletter.html';
   a.click();
   URL.revokeObjectURL(url);
 });
+
 
 // Initial render
 render();
