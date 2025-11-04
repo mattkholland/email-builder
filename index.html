@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Outlook Newsletter Builder</title>
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <h1>Outlook Newsletter Builder</h1>
+      <div class="actions">
+        <!-- Adders -->
+        <button data-add="banner" class="btn">+ Banner</button>
+        <button data-add="textonly" class="btn">+ Text-only</button>
+        <button data-add="divider" class="btn">+ Divider</button>
+        <button data-add="textImgR" class="btn">+ Text left / Image right</button>
+        <button data-add="imgTextL" class="btn">+ Image left / Text right</button>
+        <button data-add="s5050" class="btn">+ 50/50</button>
+        <button data-add="s5050flip" class="btn">+ 50/50 (flipped)</button>
+        <button data-add="cards" class="btn">+ 2 Cards</button>
+        <button data-add="twoThumbs" class="btn">+ 2 Thumbs + Text</button>
+        <button data-add="spotlight" class="btn">+ Spotlight</button>
+        <button data-add="footer" class="btn">+ Footer</button>
+        <button data-add="feedback" class="btn">+ Feedback</button>
+        <!-- Export -->
+        <button id="exportHtml" class="btn dark">⤓ Export HTML</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <h2>Section Properties</h2>
+      <div class="field">
+        <label>Selected Section</label>
+        <div id="currentSection" class="muted">None selected — click a card to edit.</div>
+      </div>
+
+      <div id="editor" class="hidden">
+        <!-- Shared -->
+        <div class="field contextual title-field">
+          <label for="titleInput">Title</label>
+          <input type="text" id="titleInput" placeholder="[Title]">
+        </div>
+        <div class="field contextual eyebrow-field">
+          <label for="eyebrowInput">Eyebrow (SPOTLIGHT)</label>
+          <input type="text" id="eyebrowInput" placeholder="EYEBROW">
+        </div>
+        <div class="field contextual body-field">
+          <label for="bodyInput">Body</label>
+          <textarea id="bodyInput" rows="4" placeholder="[Body copy]"></textarea>
+        </div>
+
+        <div class="row contextual cta-row">
+          <div class="field">
+            <label for="ctaText">CTA text</label>
+            <input type="text" id="ctaText" placeholder="Learn more →">
+          </div>
+          <div class="field">
+            <label for="ctaUrl">CTA URL</label>
+            <input type="url" id="ctaUrl" placeholder="https://example.com">
+          </div>
+        </div>
+
+        <div class="field contextual divider-field">
+          <label for="dividerText">Divider label</label>
+          <input type="text" id="dividerText" placeholder="Section Title">
+        </div>
+
+        <div class="field contextual imgA-field">
+          <label>Image</label>
+          <input type="file" id="imgAFile" accept="image/*">
+          <input type="url" id="imgAUrl" placeholder="or paste image URL">
+          <div class="hint">Tip: use either upload or URL.</div>
+        </div>
+
+        <div class="row contextual bgcolor-row">
+          <div class="field">
+            <label for="bgColor">Background (SPOTLIGHT)</label>
+            <input type="text" id="bgColor" value="#fbe232">
+          </div>
+          <div class="field">
+            <label for="fgColor">Text color (SPOTLIGHT)</label>
+            <input type="text" id="fgColor" value="#000000">
+          </div>
+        </div>
+
+        <div class="field contextual flip-row">
+          <label>50/50 options</label>
+          <div class="checkbox">
+            <input type="checkbox" id="flip5050">
+            <label for="flip5050">Flip</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <button id="apply" class="btn accent">Apply changes</button>
+        </div>
+      </div>
+
+      <hr>
+      <h2>Theme</h2>
+      <div class="row">
+        <div class="field">
+          <label for="accentColor">Divider color</label>
+          <input type="text" id="accentColor" value="#FBE232">
+        </div>
+        <div class="field">
+          <label for="maxWidth">Email width (px)</label>
+          <input type="text" id="maxWidth" value="600">
+        </div>
+      </div>
+      <div class="field">
+        <button id="applyTheme" class="btn">Apply Theme</button>
+      </div>
+
+      <div class="tiny muted">Titles have 10px above/below. CTAs have 10px above. Spotlight CTAs are black; others use #007da3.</div>
+    </aside>
+
+    <main>
+      <div id="list" class="cards"></div>
+      <div class="canvas">
+        <div class="email" id="preview"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="src/schema.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>
