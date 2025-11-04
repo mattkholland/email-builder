@@ -21,7 +21,21 @@ window.TYPES = {
   s5050:'50/50',
   s5050flip:'50/50 (flipped)',
   cards:'2 Cards',
-  spotlight:'Spotlight',
+
+  spotlight: {
+  label: "Spotlight",
+  defaults: {
+    eyebrow: "FEATURED",
+    title: "[Spotlight Title]",
+    body: "[Brief supporting text here.]",
+    imgA: "https://placehold.co/180x237/png",
+    bg: "#fbe232",
+    textColor: "#000000",
+    ctaText: "Learn more →",
+    ctaUrl: "#"
+  }
+},
+  
   footer:'Footer',
   feedback:'Feedback'
 };
@@ -31,7 +45,7 @@ window.PH = {
   banner: `https://placehold.co/${THEME.sizes.banner.w}x${THEME.sizes.banner.h}/png`,
   half:   `https://placehold.co/${THEME.sizes.half.w}x${THEME.sizes.half.h}/png`,
   card:   `https://placehold.co/${THEME.sizes.card.w}x${THEME.sizes.card.h}/png`,
-  spot:   `https://placehold.co/${THEME.sizes.spot.w}x${THEME.sizes.spot.h}/png`,
+  :   `https://placehold.co/${THEME.sizes..w}x${THEME.sizes..h}/png`,
   twol:   `https://placehold.co/284x164/png`,
   twor:   `https://placehold.co/284x164/png`
 };
