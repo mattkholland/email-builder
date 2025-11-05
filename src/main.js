@@ -501,4 +501,4 @@ function spacerRow(px) {
   return '<tr><td style="height:' + px + 'px;line-height:0;font-size:0;">&nbsp;</td></tr>';
 }
 
-// ===== end main.js =====
+// ===== end main.js ====
