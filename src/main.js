@@ -132,15 +132,19 @@ function toPreview(s) {
       : "";
 
   switch (s.type) {
-    case "banner":
-      return `
-        <table role="presentation" width="100%"><tr>
-          <td class="img-target" data-key="src" data-idx="${sections.indexOf(s)}">
-            <img src="${esc(s.data.src)}" width="600" height="200" style="display:block; width:600px; height:200px; border:0;" alt="${esc(s.data.alt || "Banner")}">
-          </td>
-        </tr></table>
-        <div class="spacer32"></div>
-      `;
+case "banner":
+  return `
+    <table role="presentation" width="100%"><tr>
+      <td class="img-target" data-key="src" data-idx="${sections.indexOf(s)}">
+        <img src="${esc(s.data.src)}"
+             width="100%" height="200"
+             style="display:block; width:100%; height:200px; border:0;"
+             alt="${esc(s.data.alt || "Banner")}">
+      </td>
+    </tr></table>
+    <div class="spacer32"></div>
+  `;
+
 
     case "textonly":
       return `
@@ -429,25 +433,40 @@ function updateImage(idx, key, dataUrl) {
 /* --------------------------- Export (HTML) -------------------------- */
 /* (Unchanged here — your export already shows the title above the columns.) */
 function buildExport() {
-  // You already have your Outlook-safe export function in your working version.
-  // Keeping export logic unchanged to avoid regressions.
-  // If you do need this inlined here later, I can drop it in verbatim.
   const rows = sections.map(toExportRow).join("");
+
   return `<!DOCTYPE html>
 <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head><meta charset="utf-8"><meta name="x-apple-disable-message-reformatting"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Newsletter</title>
-<!--[if mso]><style>*{font-family:Arial, sans-serif !important;}</style><![endif]--></head>
+<head>
+<meta charset="utf-8">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newsletter</title>
+<!--[if mso]><style>*{font-family:Arial, sans-serif !important;}</style><![endif]-->
+</head>
 <body style="margin:0; padding:0; background-color:#ffffff;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr><td align="center" style="padding:24px;">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; border:1px solid #e5e5e5;">
-        ${rows}
-      </table>
-    </td></tr>
+    <tr>
+      <td align="center" style="padding:24px;">
+        <!-- Container table locked to 600px -->
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; border-collapse:collapse;">
+          <tr>
+            <!-- Border + 10px inner padding on the container cell (Outlook-safe) -->
+            <td style="border:1px solid #e5e5e5; padding:10px; background:#ffffff;">
+              <!-- Inner content table fills remaining width (600 - 20 = 580) -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; background:#ffffff;">
+                ${rows}
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
   </table>
 </body>
 </html>`;
 }
+
 
 function toExportRow(s) {
   // Keep your existing export rows.
@@ -455,8 +474,14 @@ function toExportRow(s) {
   const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   switch (s.type) {
     case "banner":
-      return `<tr><td><img src="${esc(s.data.src)}" width="600" height="200" style="display:block; width:600px; height:200px; border:0;" alt="${esc(s.data.alt || "Banner")}"></td></tr>
+  return `<tr><td>
+  <img src="${esc(s.data.src)}"
+       width="100%" height="200"
+       style="display:block; width:100%; height:200px; border:0;"
+       alt="${esc(s.data.alt || "Banner")}">
+</td></tr>
 <tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
+
     case "textonly":
       return `<tr><td style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333; padding:0 16px;">
 <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${esc(s.data.title)}</div>
