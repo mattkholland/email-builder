@@ -46,6 +46,17 @@ const PH = (window.PH) || {
   half:     'https://placehold.co/285x185/png',   // 50/50 thumbnails
   spotlight:'https://placehold.co/180x237/png'    // spotlight thumb
 };
+// --- Utility: safely escape HTML text to prevent tag injection ---
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 
 // Apply changes
 document.getElementById("apply").addEventListener("click", applyChanges);
