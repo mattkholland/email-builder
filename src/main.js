@@ -235,34 +235,30 @@ function toPreview(s) {
       `;
     }
 
-    case "cards":
-      return `
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-          <tr>
-            <td style="width:285px; vertical-align:top; padding-right:30px;">
-              <div class="img-target" data-key="left.img" data-idx="${sections.indexOf(s)}">
-                <img src="${esc(s.data.left.img)}" width="285" height="185" style="display:block; border:0;" alt="">
-              </div>
-              <div class="txt">
-                <div class="title" style="margin:10px 0;">${esc(s.data.left.title)}</div>
-                <div>${esc(s.data.left.body)}</div>
-                ${cta(s.data.left.ctaText, s.data.left.ctaUrl)}
-              </div>
-            </td>
-            <td style="width:285px; vertical-align:top;">
-              <div class="img-target" data-key="right.img" data-idx="${sections.indexOf(s)}">
-                <img src="${esc(s.data.right.img)}" width="285" height="185" style="display:block; border:0;" alt="">
-              </div>
-              <div class="txt">
-                <div class="title" style="margin:10px 0;">${esc(s.data.right.title)}</div>
-                <div>${esc(s.data.right.body)}</div>
-                ${cta(s.data.right.ctaText, s.data.right.ctaUrl)}
-              </div>
-            </td>
-          </tr>
-        </table>
-        <div class="spacer32"></div>
-      `;
+    case 'cards':
+  return `
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px; table-layout:fixed; border-collapse:collapse;">
+    <tr>
+      <td width="285" valign="top" style="padding:0 30px 0 0;">
+        <img src="${s.data.card1.img}" width="285" height="185" style="display:block; width:285px; height:185px; border:0;" alt="">
+        <div class="txt">
+          <div class="title">${escapeHtml(s.data.card1.title)}</div>
+          ${escapeHtml(s.data.card1.body)}
+          <br><a href="${escapeHtml(s.data.card1.ctaUrl)}">${escapeHtml(s.data.card1.ctaText)}</a>
+        </div>
+      </td>
+      <td width="285" valign="top" style="padding:0;">
+        <img src="${s.data.card2.img}" width="285" height="185" style="display:block; width:285px; height:185px; border:0;" alt="">
+        <div class="txt">
+          <div class="title">${escapeHtml(s.data.card2.title)}</div>
+          ${escapeHtml(s.data.card2.body)}
+          <br><a href="${escapeHtml(s.data.card2.ctaUrl)}">${escapeHtml(s.data.card2.ctaText)}</a>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div class="spacer32"></div>`;
+
 
     case "spotlight":
       return `
@@ -557,28 +553,33 @@ function toExportRow(s) {
 <tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
     }
 
-    case "cards":
-      return `<tr><td style="padding:0;">
-  <table role="presentation" width="100%"><tr>
-    <td width="285" valign="top" style="padding-right:30px;">
-      <img src="${esc(s.data.left.img)}" width="285" height="185" style="display:block; border:0;" alt="">
-      <div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">
-        <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${esc(s.data.left.title)}</div>
-        <div>${esc(s.data.left.body)}</div>
-        ${s.data.left.ctaText && s.data.left.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.left.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.left.ctaText)}</a></div>` : ``}
-      </div>
-    </td>
-    <td width="285" valign="top">
-      <img src="${esc(s.data.right.img)}" width="285" height="185" style="display:block; border:0;" alt="">
-      <div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">
-        <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${esc(s.data.right.title)}</div>
-        <div>${esc(s.data.right.body)}</div>
-        ${s.data.right.ctaText && s.data.right.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.right.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.right.ctaText)}</a></div>` : ``}
-      </div>
-    </td>
-  </tr></table>
-</td></tr>
-<tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
+    case 'cards':
+  return `
+<tr>
+  <td style="padding:0 0 32px 0;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px; table-layout:fixed; border-collapse:collapse;">
+      <tr>
+        <td valign="top" width="285" style="padding:0 30px 0 0;">
+          <img src="${s.data.card1.img}" width="285" height="185" alt="" style="display:block; border:0; width:285px; height:185px;">
+          <div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:__TEXT__; padding-top:10px;">
+            <strong style="color:__TITLE__; display:block; margin:10px 0;">${escapeHtml(s.data.card1.title)}</strong>
+            ${escapeHtml(s.data.card1.body)}
+            <br><a href="${escapeHtml(s.data.card1.ctaUrl)}" style="color:__LINK__; text-decoration:underline; display:inline-block; margin-top:10px;">${escapeHtml(s.data.card1.ctaText)}</a>
+          </div>
+        </td>
+        <td valign="top" width="285" style="padding:0;">
+          <img src="${s.data.card2.img}" width="285" height="185" alt="" style="display:block; border:0; width:285px; height:185px;">
+          <div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:__TEXT__; padding-top:10px;">
+            <strong style="color:__TITLE__; display:block; margin:10px 0;">${escapeHtml(s.data.card2.title)}</strong>
+            ${escapeHtml(s.data.card2.body)}
+            <br><a href="${escapeHtml(s.data.card2.ctaUrl)}" style="color:__LINK__; text-decoration:underline; display:inline-block; margin-top:10px;">${escapeHtml(s.data.card2.ctaText)}</a>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>`;
+
 
     case "spotlight":
       return `<tr><td style="background:#fbe232; color:#000; padding:16px;">
