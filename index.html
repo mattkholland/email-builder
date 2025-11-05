@@ -11,7 +11,7 @@
     <div class="wrap">
       <h1>Outlook Newsletter Builder</h1>
       <div class="actions">
-        <!-- Adders (approved only) -->
+        <!-- Adders (approved set only) -->
         <button data-add="banner" class="btn">+ Banner</button>
         <button data-add="textonly" class="btn">+ Text-only</button>
         <button data-add="divider" class="btn">+ Divider</button>
@@ -21,8 +21,8 @@
         <button data-add="spotlight" class="btn">+ Spotlight</button>
         <button data-add="footer" class="btn">+ Footer</button>
         <button data-add="feedback" class="btn">+ Feedback</button>
-        <!-- Export (green) -->
-        <button id="exportHtml" class="btn" style="background:#28a745;color:#fff;border-color:#28a745;">⤓ Export HTML</button>
+        <!-- Export -->
+        <button id="exportHtml" class="btn btn-green">⤓ Export HTML</button>
       </div>
     </div>
   </header>
@@ -41,10 +41,12 @@
           <label for="titleInput">Title</label>
           <input type="text" id="titleInput" placeholder="[Title]">
         </div>
+
         <div class="field contextual eyebrow-field">
           <label for="eyebrowInput">Eyebrow (SPOTLIGHT)</label>
           <input type="text" id="eyebrowInput" placeholder="EYEBROW">
         </div>
+
         <div class="field contextual body-field">
           <label for="bodyInput">Body</label>
           <textarea id="bodyInput" rows="4" placeholder="[Body copy]"></textarea>
@@ -70,10 +72,10 @@
           <label>Image</label>
           <input type="file" id="imgAFile" accept="image/*">
           <input type="url" id="imgAUrl" placeholder="or paste image URL">
-          <div class="hint">Tip: use either upload or URL. You can also click an image in the preview.</div>
+          <div class="hint">Tip: use either upload or URL.</div>
         </div>
 
-        <div class="row contextual bgcolor-row">
+        <div class="row contextual spotlight-colors">
           <div class="field">
             <label for="bgColor">Background (SPOTLIGHT)</label>
             <input type="text" id="bgColor" value="#fbe232">
@@ -91,16 +93,14 @@
             <label for="flip5050">Flip</label>
           </div>
         </div>
-<!-- Which card to edit (only shows for 2 Cards) -->
-<div class="row contextual cards-side-row">
-  <div class="field">
-    <label for="cardSide">Which card</label>
-    <select id="cardSide">
-      <option value="left">Left</option>
-      <option value="right">Right</option>
-    </select> 
-  </div>
-</div>
+
+        <div class="field contextual cards-which">
+          <label>Edit which card?</label>
+          <div class="radio">
+            <label><input type="radio" name="cardWhich" value="1" checked> Card 1</label>
+            <label><input type="radio" name="cardWhich" value="2"> Card 2</label>
+          </div>
+        </div>
 
         <div class="field">
           <button id="apply" class="btn accent">Apply changes</button>
@@ -114,13 +114,15 @@
           <label for="accentColor">Divider color</label>
           <input type="text" id="accentColor" value="#FBE232">
         </div>
-        <!-- (Removed Email width control) -->
       </div>
       <div class="field">
         <button id="applyTheme" class="btn">Apply Theme</button>
       </div>
 
-      <div class="tiny muted">Titles have 10px above/below. CTAs have 10px above. Spotlight CTAs are black; others use #007da3.</div>
+      <div class="tiny muted">
+        Titles have 10px above/below. CTAs have 10px above. Spotlight CTAs are black; others use #007da3.
+        Email width is locked to 600px. Banner is 600×200. 2-Col gaps use a spacer column to avoid border overlap.
+      </div>
     </aside>
 
     <main>
@@ -131,7 +133,7 @@
     </main>
   </div>
 
-<script type="module" src="src/main.js"></script>
-
+  <script src="src/schema.js"></script>
+  <script src="src/main.js"></script>
 </body>
 </html>
