@@ -64,15 +64,16 @@ document.getElementById("exportHtml").addEventListener("click", () => {
 });
 
 /* --------------------------- Rendering --------------------------- */
+// ⬇️ REPLACE your existing render() in src/main.js with this:
 function render() {
   // keep data clean
   sections = sections.filter((s) => s && s.type);
 
-  // list (cards)
+  // build list (cards) — note draggable="true"
   list.innerHTML = sections
     .map(
       (s, i) => `
-      <div class="card" data-idx="${i}">
+      <div class="card" data-idx="${i}" draggable="true">
         <h3>${i + 1}. ${SECTION_TYPES[s.type]}</h3>
         <div class="mini-actions">
           <button data-act="select">Edit</button>
@@ -82,7 +83,7 @@ function render() {
     )
     .join("");
 
-  // bind mini-actions
+  // mini-actions (edit/delete)
   list.querySelectorAll(".card").forEach((el) => {
     const idx = parseInt(el.getAttribute("data-idx"), 10);
     el.addEventListener("click", (e) => {
@@ -98,8 +99,53 @@ function render() {
     });
   });
 
+  // 🔁 Drag & drop reorder
+  let dragIdx = null;
+
+  list.querySelectorAll(".card").forEach((el) => {
+    el.addEventListener("dragstart", (e) => {
+      dragIdx = parseInt(el.getAttribute("data-idx"), 10);
+      el.classList.add("dragging");
+      // for Firefox
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", String(dragIdx));
+    });
+
+    el.addEventListener("dragend", () => {
+      el.classList.remove("dragging");
+      list.querySelectorAll(".drop-target").forEach((n) => n.classList.remove("drop-target"));
+      dragIdx = null;
+    });
+
+    el.addEventListener("dragover", (e) => {
+      e.preventDefault(); // allow drop
+      el.classList.add("drop-target");
+      e.dataTransfer.dropEffect = "move";
+    });
+
+    el.addEventListener("dragleave", () => {
+      el.classList.remove("drop-target");
+    });
+
+    el.addEventListener("drop", (e) => {
+      e.preventDefault();
+      el.classList.remove("drop-target");
+      const overIdx = parseInt(el.getAttribute("data-idx"), 10);
+      const from = dragIdx ?? parseInt(e.dataTransfer.getData("text/plain") || "-1", 10);
+      if (Number.isNaN(from) || from < 0 || from === overIdx) return;
+
+      const [moved] = sections.splice(from, 1);
+      sections.splice(overIdx, 0, moved);
+      currentIndex = overIdx;
+      render();
+      openEditor(currentIndex);
+    });
+  });
+
+  // preview
   renderPreview();
 }
+
 
 /* ------------------------- Preview (Editor) ------------------------ */
 function renderPreview() {
