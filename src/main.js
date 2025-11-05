@@ -457,7 +457,8 @@ async function applyChanges() {
 
 // ==== EXPORT (Outlook-safe) ====
 function buildExport() {
-  const rows = state.sections.map(toExportRow).join('');
+  const rows = state.sections.map(s => toExportRow(s)).join('');
+
   return `
 <!DOCTYPE html>
 <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -469,23 +470,27 @@ function buildExport() {
 <!--[if mso]>
 <style>
   * { font-family: Arial, Helvetica, sans-serif !important; }
+  table { border-collapse: collapse !important; }
 </style>
 <![endif]-->
 </head>
-<body style="margin:0; padding:0; background-color:#f5f5f5; font-family:Arial, Helvetica, sans-serif;">
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f5f5f5;">
+<body style="margin:0; padding:0; background-color:#ffffff; font-family:Arial, Helvetica, sans-serif;">
+
+  <!-- Outer Wrapper -->
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#ffffff;">
     <tr>
-      <td align="center" style="padding:20px;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"
-               style="width:600px; background-color:#ffffff; border:1px solid #e0e0e0; border-collapse:collapse;">
+      <td align="center" style="padding:40px 0;">
+        <!-- Email Frame -->
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+               width="600" style="width:600px; border:1px solid #e0e0e0; padding:10px; background-color:#ffffff; font-family:Arial, Helvetica, sans-serif;">
           ${rows}
         </table>
       </td>
     </tr>
   </table>
+
 </body>
 </html>`;
-
 }
 
 
