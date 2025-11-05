@@ -465,26 +465,26 @@ function buildExport() {
 <meta name="x-apple-disable-message-reformatting">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Newsletter Export</title>
-<!--[if mso]><style>*{font-family:Arial, sans-serif !important;} .arial{font-family:Arial, sans-serif !important;}</style><![endif]-->
+<!--[if mso]><style>
+  * { font-family: Arial, sans-serif !important; }
+  .arial { font-family: Arial, sans-serif !important; }
+</style><![endif]-->
 </head>
-<body style="margin:0; padding:0; background-color:#ffffff;">
+<body style="margin:0; padding:0; background-color:#ffffff; font-family:Arial, Helvetica, sans-serif;">
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
     <tr><td align="center" style="padding:0;">
-      <!-- Outer border + padding (10px) to be Outlook-safe -->
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px;">
-        <tr>
-          <td style="border:1px solid #e5e5e5; padding:10px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px; background-color:#ffffff; border-collapse:collapse;">
-              ${rows}
-            </table>
-          </td>
-        </tr>
+      <!-- Single 600px table: locked width, border applied here, no padding that would increase total width -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+             width="600"
+             style="width:600px; border:1px solid #e5e5e5; background-color:#ffffff; border-collapse:collapse; font-family:Arial, Helvetica, sans-serif;">
+        ${rows}
       </table>
     </td></tr>
   </table>
 </body>
 </html>`;
 }
+
 
 function spacerRow(px = 24) {
   return `<tr><td style="height:${px}px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
