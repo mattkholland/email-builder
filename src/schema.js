@@ -19,7 +19,7 @@ const PH = {
   thumb: "https://placehold.co/200x130/png",
   half: "https://placehold.co/285x185/png",
   card: "https://placehold.co/285x185/png",
-  two: "https://placehold.co/284x164/png",
+  two: "https://placehold.co/285x185/png",
   spotlight: "https://placehold.co/180x237/png",
 };
 
