@@ -91,12 +91,15 @@ aside h2 { font-size: 14px; margin: 6px 0 10px; }
   padding: 12px;
   display: flex; justify-content: center; overflow: auto;
 }
+/* Replace your existing .email block with this */
 .email {
   width: var(--maxw);
   margin: 0 auto;
   background: #fff;
-  border: 1px dashed var(--border);
+  border: 1px solid #e5e5e5;   /* subtle gray */
+  padding: 10px;               /* 10px inside padding */
 }
+
 
 .email table { border-collapse: collapse; width: 100%; }
 .email img { display: block; border: 0; outline: 0; text-decoration: none; }
