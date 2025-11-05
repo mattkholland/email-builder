@@ -1,3 +1,9 @@
+// ---- Global state ----
+const state = {
+  sections: [],
+  selected: null
+};
+
 // src/main.js
 import { SECTION_TYPES, defaultSection } from "./schema.js";
 
