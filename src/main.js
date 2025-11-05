@@ -528,7 +528,7 @@ function toExportRow(s) {
 <tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
 
     case "textonly":
-      return `<tr><td style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333; padding:0 16px;">
+      return `<tr><td style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333; padding:0">
   <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${esc(s.data.title)}</div>
   <div>${esc(s.data.body)}</div>
   ${s.data.ctaText && s.data.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.ctaText)}</a></div>` : ``}
@@ -548,7 +548,7 @@ function toExportRow(s) {
   ${s.data.ctaText && s.data.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.ctaText)}</a></div>` : ``}
 </td>`;
       const row = flipped ? `${textCell}${imgCell}` : `${imgCell}${textCell}`;
-      return `<tr><td style="padding:0 16px;">
+      return `<tr><td style="padding:0">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr><td colspan="2" style="font-family:Arial, Helvetica, sans-serif; font-size:18px; line-height:20px; font-weight:bold; margin:0; padding:0 0 10px 0;">${esc(s.data.title)}</td></tr>
     <tr>${row}</tr>
@@ -558,7 +558,7 @@ function toExportRow(s) {
     }
 
     case "cards":
-      return `<tr><td style="padding:0 16px;">
+      return `<tr><td style="padding:0;">
   <table role="presentation" width="100%"><tr>
     <td width="285" valign="top" style="padding-right:30px;">
       <img src="${esc(s.data.left.img)}" width="285" height="185" style="display:block; border:0;" alt="">
