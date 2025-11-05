@@ -39,6 +39,13 @@ document.querySelectorAll("[data-add]").forEach((btn) => {
     openEditor(currentIndex);
   });
 });
+// ---- Placeholder images (ensure PH exists) -------------------------------
+const PH = (window.PH) || {
+  banner:   'https://placehold.co/600x200/png',
+  c:        'https://placehold.co/285x185/png',   // card thumbnails
+  half:     'https://placehold.co/285x185/png',   // 50/50 thumbnails
+  spotlight:'https://placehold.co/180x237/png'    // spotlight thumb
+};
 
 // Apply changes
 document.getElementById("apply").addEventListener("click", applyChanges);
