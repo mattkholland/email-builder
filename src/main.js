@@ -37,14 +37,18 @@ document.querySelectorAll('[data-add]').forEach(btn => {
   btn.addEventListener('click', () => addSection(btn.dataset.add));
 });
 document.getElementById('exportHtml').addEventListener('click', () => {
-  const html = Export();
+  const html = buildExport();
   const blob = new Blob([html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'newsletter.html';
-  document.body.appendChild(a); a.click(); a.remove();
+  a.href = url;
+  a.download = 'newsletter.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
+
 
 // Theme apply
 $applyTheme.addEventListener('click', () => {
