@@ -260,6 +260,7 @@ function toPreview(s) {
   <div class="spacer32"></div>`;
 
 
+
     case "spotlight":
       return `
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${esc(s.data.bgColor)}; color:${esc(s.data.fgColor)};">
