@@ -473,17 +473,27 @@ function buildExport() {
 <body style="margin:0; padding:0; background-color:#ffffff; font-family:Arial, Helvetica, sans-serif;">
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
     <tr><td align="center" style="padding:0;">
-      <!-- Single 600px table: locked width, border applied here, no padding that would increase total width -->
+      <!-- Outer frame: locked 600px width, subtle gray border -->
       <table role="presentation" cellpadding="0" cellspacing="0" border="0"
              width="600"
              style="width:600px; border:1px solid #e5e5e5; background-color:#ffffff; border-collapse:collapse; font-family:Arial, Helvetica, sans-serif;">
-        ${rows}
+        <tr>
+          <!-- 10px inset padding inside the border -->
+          <td style="padding:10px;">
+            <!-- Inner content table: 580px -->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+                   width="580" style="width:580px; border-collapse:collapse; font-family:Arial, Helvetica, sans-serif;">
+              ${rows}
+            </table>
+          </td>
+        </tr>
       </table>
     </td></tr>
   </table>
 </body>
 </html>`;
 }
+
 
 
 
@@ -562,29 +572,47 @@ ${spacerRow(32)}`;
 ${spacerRow(32)}`;
     }
 
-    case 'spotlight': {
-      const bg = s.data.bg || '#fbe232';
-      const fg = s.data.fg || '#000000';
-      return `
-<tr><td>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${bg};">
-    <tr><td class="arial" style="color:${fg}; padding:16px;">
-      <div style="font-size:12px; line-height:16px; letter-spacing:.03em; text-transform:uppercase; margin:0 0 6px 0;"><strong>${escapeHtml(s.data.eyebrow || '')}</strong></div>
-      <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${escapeHtml(s.data.title)}</div>
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
-        <td valign="top" width="180" style="padding-right:20px;">
-          <img src="${s.data.imgA}" width="180" height="200" alt="" style="display:block; width:180px; height:200px; border:0;">
+   case 'spotlight': {
+  const bg = s.data.bg || '#fbe232';
+  const fg = s.data.fg || '#000000';
+  const eyebrow = escapeHtml(s.data.eyebrow || 'EYEBROW');
+  const title   = escapeHtml(s.data.title   || '[Spotlight Title]');
+  const body    = escapeHtml(s.data.body    || '[Short supporting copy.]');
+  const img     = s.data.imgA || 'https://placehold.co/180x200/png';
+  const ctaText = s.data.ctaText || '';
+  const ctaUrl  = s.data.ctaUrl  || '';
+  const cta = (ctaText && ctaUrl)
+    ? `<br><a href="${escapeHtml(ctaUrl)}" style="color:#000000; text-decoration:underline;">${escapeHtml(ctaText)}</a>`
+    : '';
+
+  // Full-width (of the inner 580px table) spotlight band with background
+  return `
+<tr>
+  <td>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%; border-collapse:collapse; background-color:${bg};">
+      <tr>
+        <td style="padding:16px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%; border-collapse:collapse; font-family:Arial, Helvetica, sans-serif; color:${fg};">
+            <tr>
+              <td valign="top" width="180" style="width:180px; padding-right:20px;">
+                <img src="${img}" width="180" height="200" alt="" style="display:block; border:0; width:180px; height:200px;">
+              </td>
+              <td valign="top">
+                <div style="font-size:12px; line-height:16px; font-weight:bold; letter-spacing:0.03em; text-transform:uppercase; color:${fg}; margin:10px 0 10px 0;">${eyebrow}</div>
+                <div style="font-size:18px; line-height:20px; font-weight:bold; color:${fg}; margin:10px 0 10px 0;">${title}</div>
+                <div style="font-size:14px; line-height:18px; color:${fg};">${body}${cta}</div>
+              </td>
+            </tr>
+          </table>
         </td>
-        <td valign="top" class="arial" style="font-size:14px; line-height:18px; color:${fg};">
-          <div>${escapeHtml(s.data.body)}</div>
-          <a href="${escapeHtml(s.data.ctaUrl)}" style="color:#000000; text-decoration:none; font-weight:600; display:inline-block; margin-top:10px;">${escapeHtml(s.data.ctaText)}</a>
-        </td>
-      </tr></table>
-    </td></tr>
-  </table>
-</td></tr>
-${spacerRow(32)}`;
-    }
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>
+`;
+}
+
 
     case 'footer':
       return `
