@@ -37,7 +37,7 @@ document.querySelectorAll('[data-add]').forEach(btn => {
   btn.addEventListener('click', () => addSection(btn.dataset.add));
 });
 document.getElementById('exportHtml').addEventListener('click', () => {
-  const html = buildExport();
+  const html = Export();
   const blob = new Blob([html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -459,8 +459,7 @@ async function applyChanges() {
 function buildExport() {
   const rows = state.sections.map(s => toExportRow(s)).join('');
 
-  return `
-<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
 <meta charset="utf-8">
@@ -468,27 +467,33 @@ function buildExport() {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Newsletter Export</title>
 <!--[if mso]>
-<style>
-  * { font-family: Arial, Helvetica, sans-serif !important; }
-  table { border-collapse: collapse !important; }
-</style>
+  <style>
+    * { font-family: Arial, Helvetica, sans-serif !important; }
+    table { border-collapse: collapse !important; }
+  </style>
 <![endif]-->
 </head>
 <body style="margin:0; padding:0; background-color:#ffffff; font-family:Arial, Helvetica, sans-serif;">
-
-  <!-- Outer Wrapper -->
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#ffffff;">
+  <!-- full-width wrapper -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;">
     <tr>
-      <td align="center" style="padding:40px 0;">
-        <!-- Email Frame -->
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-               width="600" style="width:600px; border:1px solid #e0e0e0; padding:10px; background-color:#ffffff; font-family:Arial, Helvetica, sans-serif;">
-          ${rows}
+      <td align="center" style="padding:24px 0;">
+        <!-- email frame: ONE border, 10px inset padding -->
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+               style="width:600px; background:#ffffff; border:1px solid #e0e0e0;">
+          <tr>
+            <td style="padding:10px; font-family:Arial, Helvetica, sans-serif;">
+              <!-- inner content table locked to 580 -->
+              <table role="presentation" width="580" cellpadding="0" cellspacing="0" border="0"
+                     style="width:580px; border-collapse:collapse; font-family:Arial, Helvetica, sans-serif;">
+                ${rows}
+              </table>
+            </td>
+          </tr>
         </table>
       </td>
     </tr>
   </table>
-
 </body>
 </html>`;
 }
@@ -500,151 +505,180 @@ function spacerRow(px = 24) {
 }
 
 function toExportRow(s) {
+  const esc = x => String(x || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const spacer24 = '<tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>';
+
   switch (s.type) {
-   case 'banner':
-  return `
+
+    case 'banner':
+      return `
 <tr>
-  <td align="center" style="padding:10px; background:#ffffff; border:1px solid #e0e0e0;">
-    <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" 
-           style="width:600px; border-collapse:collapse;">
-      <tr>
-        <td style="padding:0;">
-          <img src="${s.data.src}" width="600" height="${s.data.height || 200}"
-               alt="${escapeHtml(s.data.alt || 'Banner')}"
-               style="display:block; width:600px; height:${s.data.height || 200}px; border:0;">
-        </td>
-      </tr>
-    </table>
+  <td align="center" style="padding:0; font-family:Arial, Helvetica, sans-serif;">
+    <img src="${esc(s.data.src)}" width="580" height="${s.data.height || 200}"
+         alt="${esc(s.data.alt || 'Banner')}"
+         style="display:block; width:580px; height:${s.data.height || 200}px; border:0; line-height:0; font-size:0;">
   </td>
 </tr>
-<tr><td style="height:32px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
-
-
-    case 'textonly': {
-      const cta = (s.data.ctaText && s.data.ctaUrl) ? `<br><a href="${escapeHtml(s.data.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600; display:inline-block; margin-top:10px;">${escapeHtml(s.data.ctaText)}</a>` : '';
-      return `
-<tr><td class="arial" style="padding:0; font-size:14px; line-height:18px; color:#333333;">
-  <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0; color:#111111;">${escapeHtml(s.data.title)}</div>
-  <div>${escapeHtml(s.data.body)}${cta}</div>
-</td></tr>
-${spacerRow(32)}`;
-    }
+${spacer24}`;
 
     case 'divider':
       return `
-<tr><td>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr><td class="arial" style="background-color:${state.theme.accent}; color:#000000; font-size:13px; line-height:18px; text-transform:uppercase; font-weight:bold; padding:6px 10px;">${escapeHtml(s.data.label)}</td></tr>
-  </table>
-</td></tr>
-${spacerRow(24)}`;
-
-    case 's5050':
-    case 's5050flip': {
-      const flipped = s.data.flipped === true || s.type === 's5050flip';
-      const leftImg = !flipped;
-      const titleRow = `
-<tr><td class="arial" style="font-size:18px; line-height:20px; font-weight:bold; margin:0; color:#111111; padding:0;">
-  <div style="margin:10px 0;">${escapeHtml(s.data.title)}</div>
-</td></tr>`;
-      const textCell = `
-<td valign="top" width="285" class="arial" style="font-size:14px; line-height:18px; color:#333333;">
-  <div>${escapeHtml(s.data.body)}</div>
-  <a href="${escapeHtml(s.data.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600; display:inline-block; margin-top:10px;">${escapeHtml(s.data.ctaText)}</a>
-</td>`;
-      const imgCell = `
-<td valign="top" width="285"><img src="${s.data.imgA}" width="285" height="185" alt="" style="display:block; border:0; width:285px; height:185px;"></td>`;
-      return `
-${titleRow}
 <tr>
-  ${leftImg ? imgCell : textCell}
-  <td width="30"></td>
-  ${leftImg ? textCell : imgCell}
-</tr>
-${spacerRow(32)}`;
-    }
-
-    case 'cards': {
-      const c1 = s.data.card1, c2 = s.data.card2;
-      const col = (c) => `
-<td valign="top" width="285">
-  <img src="${c.img}" width="285" height="185" alt="" style="display:block; border:0; width:285px; height:185px;">
-  <div class="arial" style="font-size:14px; line-height:18px; color:#333333;">
-    <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0; color:#111111;">${escapeHtml(c.title)}</div>
-    <div>${escapeHtml(c.body)}</div>
-    <a href="${escapeHtml(c.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600; display:inline-block; margin-top:10px;">${escapeHtml(c.ctaText)}</a>
-  </div>
-</td>`;
-      return `
-<tr>
-  ${col(c1)}
-  <td width="30"></td>
-  ${col(c2)}
-</tr>
-${spacerRow(32)}`;
-    }
-
-   case 'spotlight': {
-  const bg = s.data.bg || '#fbe232';
-  const fg = s.data.fg || '#000000';
-  const eyebrow = escapeHtml(s.data.eyebrow || 'EYEBROW');
-  const title   = escapeHtml(s.data.title   || '[Spotlight Title]');
-  const body    = escapeHtml(s.data.body    || '[Short supporting copy.]');
-  const img     = s.data.imgA || 'https://placehold.co/180x200/png';
-  const ctaText = s.data.ctaText || '';
-  const ctaUrl  = s.data.ctaUrl  || '';
-  const cta = (ctaText && ctaUrl)
-    ? `<br><a href="${escapeHtml(ctaUrl)}" style="color:#000000; text-decoration:underline;">${escapeHtml(ctaText)}</a>`
-    : '';
-
-  // Full-width (of the inner 580px table) spotlight band with background
-  return `
-<tr>
-  <td>
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%; border-collapse:collapse; background-color:${bg};">
+  <td style="padding:0; font-family:Arial, Helvetica, sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr>
-        <td style="padding:16px;">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%; border-collapse:collapse; font-family:Arial, Helvetica, sans-serif; color:${fg};">
-            <tr>
-              <td valign="top" width="180" style="width:180px; padding-right:20px;">
-                <img src="${img}" width="180" height="200" alt="" style="display:block; border:0; width:180px; height:200px;">
-              </td>
-              <td valign="top">
-                <div style="font-size:12px; line-height:16px; font-weight:bold; letter-spacing:0.03em; text-transform:uppercase; color:${fg}; margin:10px 0 10px 0;">${eyebrow}</div>
-                <div style="font-size:18px; line-height:20px; font-weight:bold; color:${fg}; margin:10px 0 10px 0;">${title}</div>
-                <div style="font-size:14px; line-height:18px; color:${fg};">${body}${cta}</div>
-              </td>
-            </tr>
-          </table>
+        <td style="background:#FBE232; color:#000; font-size:13px; line-height:18px; text-transform:uppercase; font-weight:bold; padding:6px 10px; font-family:Arial, Helvetica, sans-serif;">
+          ${esc(s.data.label)}
         </td>
       </tr>
     </table>
   </td>
 </tr>
-<tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>
-`;
-}
+${spacer24}`;
 
+    case 'textonly': {
+      const cta = (s.data.ctaText && s.data.ctaUrl)
+        ? `<div style="height:10px; line-height:10px; font-size:0;">&nbsp;</div><a href="${esc(s.data.ctaUrl)}" style="color:#007da3; text-decoration:underline;">${esc(s.data.ctaText)}</a>`
+        : '';
+      return `
+<tr>
+  <td style="padding:0; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333333;">
+    <h2 style="margin:10px 0; font-size:18px; line-height:20px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; color:#111111;">${esc(s.data.title)}</h2>
+    <div>${esc(s.data.body)}</div>
+    ${cta}
+  </td>
+</tr>
+${spacer24}`;
+    }
+
+    /* 50/50 — title above, then two columns (285 | 10 gutter | 285) */
+    case 's5050': {
+      const cta = (s.data.ctaText && s.data.ctaUrl)
+        ? `<div style="height:10px; line-height:10px; font-size:0;">&nbsp;</div><a href="${esc(s.data.ctaUrl)}" style="color:#007da3; text-decoration:underline;">${esc(s.data.ctaText)}</a>`
+        : '';
+      return `
+<tr><td style="padding:0; font-family:Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="580" cellpadding="0" cellspacing="0" border="0" style="width:580px;">
+    <tr>
+      <td colspan="3" style="padding:0;">
+        <h2 style="margin:10px 0; font-size:18px; line-height:20px; font-weight:bold; color:#111111; font-family:Arial, Helvetica, sans-serif;">${esc(s.data.title)}</h2>
+      </td>
+    </tr>
+    <tr>
+      <td width="285" valign="top" style="padding:0;">
+        <img src="${esc(s.data.imgA)}" width="285" height="185" alt="" style="display:block; width:285px; height:185px; border:0;">
+      </td>
+      <td width="10" style="font-size:0; line-height:0;">&nbsp;</td>
+      <td width="285" valign="top" style="font-size:14px; line-height:18px; color:#333333; font-family:Arial, Helvetica, sans-serif;">
+        <div>${esc(s.data.body)}</div>
+        ${cta}
+      </td>
+    </tr>
+  </table>
+</td></tr>
+${spacer24}`;
+    }
+
+    /* 50/50 flipped — keep title above; image flush to the RIGHT edge */
+    case 's5050flip': {
+      const cta = (s.data.ctaText && s.data.ctaUrl)
+        ? `<div style="height:10px; line-height:10px; font-size:0;">&nbsp;</div><a href="${esc(s.data.ctaUrl)}" style="color:#007da3; text-decoration:underline;">${esc(s.data.ctaText)}</a>`
+        : '';
+      return `
+<tr><td style="padding:0; font-family:Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="580" cellpadding="0" cellspacing="0" border="0" style="width:580px;">
+    <tr>
+      <td colspan="3" style="padding:0;">
+        <h2 style="margin:10px 0; font-size:18px; line-height:20px; font-weight:bold; color:#111111; font-family:Arial, Helvetica, sans-serif;">${esc(s.data.title)}</h2>
+      </td>
+    </tr>
+    <tr>
+      <td width="285" valign="top" style="font-size:14px; line-height:18px; color:#333333; font-family:Arial, Helvetica, sans-serif;">
+        <div>${esc(s.data.body)}</div>
+        ${cta}
+      </td>
+      <td width="10" style="font-size:0; line-height:0;">&nbsp;</td>
+      <td width="285" valign="top" align="right" style="padding:0;">
+        <img src="${esc(s.data.imgA)}" width="285" height="185" alt="" style="display:block; width:285px; height:185px; border:0;">
+      </td>
+    </tr>
+  </table>
+</td></tr>
+${spacer24}`;
+    }
+
+    /* Cards (2-up) — unchanged except spacing and link color */
+    case 'cards': {
+      const c1 = s.data.card1 || {};
+      const c2 = s.data.card2 || {};
+      const card = (c) => `
+        <table role="presentation" width="285" cellpadding="0" cellspacing="0" border="0" style="width:285px;">
+          <tr><td style="padding:0 0 10px 0;">
+            <img src="${esc(c.img)}" width="285" height="185" alt="" style="display:block; width:285px; height:185px; border:0;">
+          </td></tr>
+          <tr><td style="font-family:Arial, Helvetica, sans-serif;">
+            <h3 style="margin:10px 0; font-size:18px; line-height:20px; font-weight:bold; color:#111111;">${esc(c.title)}</h3>
+            <div style="font-size:14px; line-height:18px; color:#333333;">${esc(c.body)}</div>
+            ${c.ctaText && c.ctaUrl ? `<div style="height:10px; line-height:10px; font-size:0;">&nbsp;</div><a href="${esc(c.ctaUrl)}" style="color:#007da3; text-decoration:underline;">${esc(c.ctaText)}</a>` : ``}
+          </td></tr>
+        </table>`;
+
+      return `
+<tr><td style="padding:0; font-family:Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="580" cellpadding="0" cellspacing="0" border="0" style="width:580px;">
+    <tr>
+      <td valign="top" style="padding:0 15px 0 0;">${card(c1)}</td>
+      <td valign="top" style="padding:0 0 0 15px;">${card(c2)}</td>
+    </tr>
+  </table>
+</td></tr>
+${spacer24}`;
+    }
+
+    /* Spotlight — unchanged in styling; CTA stays black */
+    case 'spotlight': {
+      const cta = (s.data.ctaText && s.data.ctaUrl)
+        ? `<div style="height:10px; line-height:10px; font-size:0;">&nbsp;</div><a href="${esc(s.data.ctaUrl)}" style="color:#000000; text-decoration:underline;">${esc(s.data.ctaText)}</a>`
+        : '';
+      return `
+<tr><td style="padding:0; font-family:Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="580" cellpadding="0" cellspacing="0" border="0" style="width:580px; background:#fbe232;">
+    <tr>
+      <td width="180" valign="top" style="padding:16px;">
+        <img src="${esc(s.data.imgA || 'https://placehold.co/180x200/png')}" width="180" height="200" alt="" style="display:block; width:180px; height:200px; border:0;">
+      </td>
+      <td valign="top" style="padding:16px; color:#000000; font-size:14px; line-height:18px;">
+        ${s.data.eyebrow ? `<div style="text-transform:uppercase; font-size:12px; line-height:16px; margin:0 0 6px 0; font-weight:600;">${esc(s.data.eyebrow)}</div>` : ``}
+        <h2 style="margin:10px 0; font-size:18px; line-height:20px; font-weight:bold; color:#000000;">${esc(s.data.title)}</h2>
+        <div>${esc(s.data.body)}</div>
+        ${cta}
+      </td>
+    </tr>
+  </table>
+</td></tr>
+${spacer24}`;
+    }
 
     case 'footer':
       return `
-<tr><td>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr><td style="background:#161616; color:#ffffff; text-align:center; padding:36px 16px;">
-      <div style="font-size:14px; line-height:20px; margin:10px 0;"><strong>${escapeHtml(s.data.logo)}</strong></div>
-      <div style="font-size:12px; line-height:18px; margin:10px 0;">${escapeHtml(s.data.fourCs)}</div>
+<tr><td style="padding:0; font-family:Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="580" cellpadding="0" cellspacing="0" border="0" style="width:580px; background:#161616; color:#ffffff;">
+    <tr><td align="center" style="padding:24px 16px; font-size:12px; line-height:18px;">
+      <div style="font-size:14px; line-height:20px; margin:0 0 8px 0;"><strong>${esc(s.data.logo || '[Logo]')}</strong></div>
+      <div>${esc(s.data.fourCs || "[4c's]")}</div>
     </td></tr>
   </table>
 </td></tr>`;
 
     case 'feedback':
       return `
-<tr><td class="arial" style="text-align:center; padding:24px 0 32px 0; font-size:13px; line-height:20px; color:#333333;">
-  <strong>Questions? Ideas? Feedback?</strong><br>We’d love to hear it — please email <a href="mailto:${escapeHtml(s.data.email)}" style="color:#007da3; text-decoration:none; font-weight:600;">${escapeHtml(s.data.email)}</a>
+<tr><td style="padding:24px 0 0 0; text-align:center; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#333333;">
+  <strong>${esc(s.data.lead || 'Questions? Ideas? Feedback?')}</strong><br>
+  We’d love to hear it — please email <a href="mailto:${esc(s.data.email || 'name@email.com')}" style="color:#007da3; text-decoration:underline;">${esc(s.data.email || 'name@email.com')}</a>
 </td></tr>`;
+
+    default:
+      return '';
   }
-  return '';
 }
 
-// ==== INIT ====
-render();
