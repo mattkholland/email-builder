@@ -230,7 +230,7 @@ case "banner":
               <table role="presentation" width="100%"><tr>
                 <td style="width:180px; vertical-align:top; padding-right:24px;">
                   <div class="img-target" data-key="imgA" data-idx="${sections.indexOf(s)}">
-                    <img src="${esc(s.data.imgA)}" width="180" height="200" style="display:block; border:0;" alt="">
+                    <img src="${esc(s.data.imgA)}" width="180" height="237" style="display:block; border:0;" alt="">
                   </div>
                 </td>
                 <td class="txt" style="vertical-align:top;">
@@ -534,7 +534,7 @@ ${s.data.ctaText && s.data.ctaUrl ? `<div style="padding-top:10px;"><a href="${e
     case "spotlight":
       return `<tr><td style="background:#fbe232; color:#000; padding:16px;">
 <table role="presentation" width="100%"><tr>
-  <td width="180" valign="top" style="padding-right:24px;"><img src="${esc(s.data.imgA)}" width="180" height="200" style="display:block; border:0;" alt=""></td>
+  <td width="180" valign="top" style="padding-right:24px;"><img src="${esc(s.data.imgA)}" width="180" height="237" style="display:block; border:0;" alt=""></td>
   <td valign="top" style="font-family:Arial, Helvetica, sans-serif; color:inherit;">
     <div style="text-transform:uppercase; font-size:12px; letter-spacing:.02em; margin:0 0 6px 0;">${esc(s.data.eyebrow)}</div>
     <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0; color:inherit;">${esc(s.data.title)}</div>
