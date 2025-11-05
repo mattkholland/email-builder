@@ -22,8 +22,9 @@ const imgAUrl = document.getElementById("imgAUrl");
 const bgColorInput = document.getElementById("bgColor");
 const fgColorInput = document.getElementById("fgColor");
 const flip5050 = document.getElementById("flip5050");
+const cardSide = document.getElementById("cardSide");
 
-// Buttons (adders)
+// Adders
 document.querySelectorAll("[data-add]").forEach((btn) => {
   btn.addEventListener("click", () => {
     const type = btn.getAttribute("data-add");
@@ -42,11 +43,11 @@ document.querySelectorAll("[data-add]").forEach((btn) => {
 // Apply changes
 document.getElementById("apply").addEventListener("click", applyChanges);
 
-// Theme (divider color only; width control removed earlier by request)
+// Theme (divider color only — width control removed per your request)
 document.getElementById("applyTheme").addEventListener("click", () => {
   const accentHex = document.getElementById("accentColor").value.trim() || "#FBE232";
   document.documentElement.style.setProperty("--accent", accentHex);
-  renderPreview(); // re-paint preview so dividers reflect new color
+  renderPreview();
 });
 
 // Export
@@ -63,16 +64,26 @@ document.getElementById("exportHtml").addEventListener("click", () => {
   URL.revokeObjectURL(url);
 });
 
+// Card side selector (for 2-cards) — optional, safe if element absent
+if (cardSide) {
+  cardSide.addEventListener("change", () => {
+    if (currentIndex < 0) return;
+    const s = sections[currentIndex];
+    if (!s || s.type !== "cards") return;
+    s.data.__side = cardSide.value; // remember which side we’re editing
+    openEditor(currentIndex);       // repopulate fields for that side
+  });
+}
+
 /* --------------------------- Rendering --------------------------- */
 function render() {
-  // keep data clean
   sections = sections.filter((s) => s && s.type);
 
-  // list (cards)
+  // Build list (cards) with DnD
   list.innerHTML = sections
     .map(
       (s, i) => `
-      <div class="card" data-idx="${i}">
+      <div class="card" data-idx="${i}" draggable="true">
         <h3>${i + 1}. ${SECTION_TYPES[s.type]}</h3>
         <div class="mini-actions">
           <button data-act="select">Edit</button>
@@ -82,7 +93,7 @@ function render() {
     )
     .join("");
 
-  // bind mini-actions
+  // Mini-actions
   list.querySelectorAll(".card").forEach((el) => {
     const idx = parseInt(el.getAttribute("data-idx"), 10);
     el.addEventListener("click", (e) => {
@@ -98,13 +109,49 @@ function render() {
     });
   });
 
+  // Drag & drop reorder
+  let dragIdx = null;
+  list.querySelectorAll(".card").forEach((el) => {
+    el.addEventListener("dragstart", (e) => {
+      dragIdx = parseInt(el.getAttribute("data-idx"), 10);
+      el.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", String(dragIdx));
+    });
+    el.addEventListener("dragend", () => {
+      el.classList.remove("dragging");
+      list.querySelectorAll(".drop-target").forEach((n) => n.classList.remove("drop-target"));
+      dragIdx = null;
+    });
+    el.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      el.classList.add("drop-target");
+      e.dataTransfer.dropEffect = "move";
+    });
+    el.addEventListener("dragleave", () => {
+      el.classList.remove("drop-target");
+    });
+    el.addEventListener("drop", (e) => {
+      e.preventDefault();
+      el.classList.remove("drop-target");
+      const overIdx = parseInt(el.getAttribute("data-idx"), 10);
+      const from = dragIdx ?? parseInt(e.dataTransfer.getData("text/plain") || "-1", 10);
+      if (Number.isNaN(from) || from < 0 || from === overIdx) return;
+      const [moved] = sections.splice(from, 1);
+      sections.splice(overIdx, 0, moved);
+      currentIndex = overIdx;
+      render();
+      openEditor(currentIndex);
+    });
+  });
+
   renderPreview();
 }
 
 /* ------------------------- Preview (Editor) ------------------------ */
 function renderPreview() {
   preview.innerHTML = sections.map(toPreview).join("");
-  // enable image click/replace in preview
+  // enable preview image replacement
   preview.querySelectorAll(".img-target").forEach((el) => {
     el.addEventListener("click", async () => {
       const idx = parseInt(el.dataset.idx, 10);
@@ -124,7 +171,6 @@ function renderPreview() {
 }
 
 function toPreview(s) {
-  // Shared small helpers
   const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const cta = (t, u, color = "#007da3") =>
     t && u
@@ -136,7 +182,10 @@ function toPreview(s) {
       return `
         <table role="presentation" width="100%"><tr>
           <td class="img-target" data-key="src" data-idx="${sections.indexOf(s)}">
-            <img src="${esc(s.data.src)}" width="600" height="200" style="display:block; width:600px; height:200px; border:0;" alt="${esc(s.data.alt || "Banner")}">
+            <img src="${esc(s.data.src)}"
+                 width="100%" height="200"
+                 style="display:block; width:100%; height:200px; border:0;"
+                 alt="${esc(s.data.alt || "Banner")}">
           </td>
         </tr></table>
         <div class="spacer32"></div>
@@ -158,11 +207,11 @@ function toPreview(s) {
         <div class="spacer32"></div>
       `;
 
-    /* ---------------- 50/50 (changed: title above both cols) ---------------- */
+    // 50/50: title above both columns in preview
     case "s5050":
     case "s5050flip": {
       const flipped = s.type === "s5050flip";
-      const imgCellLeft = `
+      const imgCell = `
         <td style="width:285px; vertical-align:top; ${flipped ? "padding-left:30px;" : "padding-right:30px;"}">
           <div class="img-target" data-key="imgA" data-idx="${sections.indexOf(s)}">
             <img src="${esc(s.data.imgA)}" width="285" height="185" style="display:block; border:0;" alt="">
@@ -173,16 +222,13 @@ function toPreview(s) {
           <div>${esc(s.data.body)}</div>
           ${cta(s.data.ctaText, s.data.ctaUrl)}
         </td>`;
-
-      const row = flipped ? `${textCell}${imgCellLeft}` : `${imgCellLeft}${textCell}`;
+      const row = flipped ? `${textCell}${imgCell}` : `${imgCell}${textCell}`;
 
       return `
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-          <tr>
-            <td colspan="2" class="txt">
-              <div class="title" style="margin:10px 0;">${esc(s.data.title)}</div>
-            </td>
-          </tr>
+          <tr><td colspan="2" class="txt">
+            <div class="title" style="margin:10px 0;">${esc(s.data.title)}</div>
+          </td></tr>
           <tr>${row}</tr>
         </table>
         <div class="spacer32"></div>
@@ -273,7 +319,6 @@ function openEditor(idx) {
   // hide all contextual rows
   document.querySelectorAll(".contextual").forEach((el) => el.classList.add("hidden"));
 
-  // show only fields relevant to the section
   if (s.type === "banner") {
     show(".imgA-field");
   } else if (s.type === "textonly") {
@@ -283,7 +328,7 @@ function openEditor(idx) {
   } else if (s.type === "s5050" || s.type === "s5050flip") {
     show(".title-field", ".body-field", ".cta-row", ".imgA-field", ".flip-row");
   } else if (s.type === "cards") {
-    show(".title-field", ".body-field", ".cta-row", ".imgA-field"); // minimal editor: uses left card fields
+    show(".cards-side-row", ".title-field", ".body-field", ".cta-row", ".imgA-field");
   } else if (s.type === "spotlight") {
     show(".eyebrow-field", ".title-field", ".body-field", ".cta-row", ".imgA-field", ".bgcolor-row");
   } else if (s.type === "footer") {
@@ -292,9 +337,8 @@ function openEditor(idx) {
     show(".title-field", ".body-field", ".cta-row");
   }
 
-  // populate
-  titleInput.value =
-    s.data.title || s.data.label || s.data.lead || "";
+  // populate common defaults
+  titleInput.value = s.data.title || s.data.label || s.data.lead || "";
   eyebrowInput.value = s.data.eyebrow || "";
   bodyInput.value = s.data.body || "";
   ctaTextInput.value = s.data.ctaText || "";
@@ -304,6 +348,19 @@ function openEditor(idx) {
   bgColorInput.value = s.data.bgColor || "#fbe232";
   fgColorInput.value = s.data.fgColor || "#000000";
   if (flip5050) flip5050.checked = !!s.data.flipped;
+
+  // cards: choose side + load that side
+  if (s.type === "cards") {
+    if (!s.data.__side) s.data.__side = "left";
+    if (cardSide) cardSide.value = s.data.__side;
+    const src = s.data.__side === "right" ? s.data.right : s.data.left;
+
+    titleInput.value = src.title || "";
+    bodyInput.value = src.body || "";
+    ctaTextInput.value = src.ctaText || "";
+    ctaUrlInput.value = src.ctaUrl || "";
+    imgAUrl.value = src.img || "";
+  }
 }
 
 function show(...selectors) {
@@ -377,13 +434,15 @@ async function applyChanges() {
     }
 
     case "cards": {
-      // minimal editor: apply to left card
-      if (title) s.data.left.title = title;
-      if (body) s.data.left.body = body;
-      if (ctaT) s.data.left.ctaText = ctaT;
-      if (ctaU) s.data.left.ctaUrl = ctaU;
-      const c1 = await pick(imgAFile, imgAUrl);
-      if (c1) s.data.left.img = c1;
+      const sideKey = (cardSide && cardSide.value) || s.data.__side || "left";
+      const dst = sideKey === "right" ? s.data.right : s.data.left;
+
+      if (title) dst.title = title;
+      if (body) dst.body = body;
+      if (ctaT) dst.ctaText = ctaT;
+      if (ctaU) dst.ctaUrl = ctaU;
+      const chosen = await pick(imgAFile, imgAUrl);
+      if (chosen) dst.img = chosen;
       break;
     }
 
@@ -393,8 +452,8 @@ async function applyChanges() {
       if (body) s.data.body = body;
       if (ctaT) s.data.ctaText = ctaT;
       if (ctaU) s.data.ctaUrl = ctaU;
-      s.data.bgColor = bgColorInput.value.trim() || "#fbe232";
-      s.data.fgColor = fgColorInput.value.trim() || "#000";
+      s.data.bgColor = (bgColorInput && bgColorInput.value.trim()) || "#fbe232";
+      s.data.fgColor = (fgColorInput && fgColorInput.value.trim()) || "#000";
       const sp = await pick(imgAFile, imgAUrl);
       if (sp) s.data.imgA = sp;
       break;
@@ -412,7 +471,6 @@ async function applyChanges() {
       break;
   }
 
-  // reset file input to avoid accidental re-use
   if (imgAFile) imgAFile.value = "";
   render();
 }
@@ -427,108 +485,127 @@ function updateImage(idx, key, dataUrl) {
 }
 
 /* --------------------------- Export (HTML) -------------------------- */
-/* (Unchanged here — your export already shows the title above the columns.) */
 function buildExport() {
-  // You already have your Outlook-safe export function in your working version.
-  // Keeping export logic unchanged to avoid regressions.
-  // If you do need this inlined here later, I can drop it in verbatim.
   const rows = sections.map(toExportRow).join("");
+
   return `<!DOCTYPE html>
 <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head><meta charset="utf-8"><meta name="x-apple-disable-message-reformatting"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Newsletter</title>
-<!--[if mso]><style>*{font-family:Arial, sans-serif !important;}</style><![endif]--></head>
+<head>
+<meta charset="utf-8">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newsletter</title>
+<!--[if mso]><style>*{font-family:Arial, sans-serif !important;}</style><![endif]-->
+</head>
 <body style="margin:0; padding:0; background-color:#ffffff;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr><td align="center" style="padding:24px;">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; border:1px solid #e5e5e5;">
-        ${rows}
-      </table>
-    </td></tr>
+    <tr>
+      <td align="center" style="padding:24px;">
+        <!-- 600px, border + 10px inner padding -->
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; border-collapse:collapse;">
+          <tr>
+            <td style="border:1px solid #e5e5e5; padding:10px; background:#ffffff;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; background:#ffffff;">
+                ${rows}
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
   </table>
 </body>
 </html>`;
 }
 
 function toExportRow(s) {
-  // Keep your existing export rows.
-  // Minimal safe set so the file downloads; your real export already matches requirements.
   const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   switch (s.type) {
     case "banner":
-      return `<tr><td><img src="${esc(s.data.src)}" width="600" height="200" style="display:block; width:600px; height:200px; border:0;" alt="${esc(s.data.alt || "Banner")}"></td></tr>
-<tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
-    case "textonly":
-      return `<tr><td style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333; padding:0 16px;">
-<div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${esc(s.data.title)}</div>
-<div>${esc(s.data.body)}</div>
-${s.data.ctaText && s.data.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.ctaText)}</a></div>` : ``}
+      return `<tr><td>
+  <img src="${esc(s.data.src)}" width="100%" height="200" style="display:block; width:100%; height:200px; border:0;" alt="${esc(s.data.alt || "Banner")}">
 </td></tr>
 <tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
+
+    case "textonly":
+      return `<tr><td style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333; padding:0 16px;">
+  <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${esc(s.data.title)}</div>
+  <div>${esc(s.data.body)}</div>
+  ${s.data.ctaText && s.data.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.ctaText)}</a></div>` : ``}
+</td></tr>
+<tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
+
     case "divider":
       return `<tr><td><table role="presentation" width="100%"><tr><td style="background:#FBE232; color:#000; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:18px; text-transform:uppercase; font-weight:bold; padding:6px 10px;">${esc(s.data.label)}</td></tr></table></td></tr>
 <tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
+
     case "s5050":
     case "s5050flip": {
       const flipped = s.type === "s5050flip";
       const imgCell = `<td width="285" valign="top" style="${flipped ? "padding-left:30px;" : "padding-right:30px;"}"><img src="${esc(s.data.imgA)}" width="285" height="185" style="display:block; border:0;" alt=""></td>`;
       const textCell = `<td width="285" valign="top" style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">
-<div>${esc(s.data.body)}</div>
-${s.data.ctaText && s.data.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.ctaText)}</a></div>` : ``}
+  <div>${esc(s.data.body)}</div>
+  ${s.data.ctaText && s.data.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.ctaText)}</a></div>` : ``}
 </td>`;
       const row = flipped ? `${textCell}${imgCell}` : `${imgCell}${textCell}`;
       return `<tr><td style="padding:0 16px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr><td colspan="2" style="font-family:Arial, Helvetica, sans-serif; font-size:18px; line-height:20px; font-weight:bold; margin:0; padding:0 0 10px 0;">${esc(s.data.title)}</td></tr>
-  <tr>${row}</tr>
-</table>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td colspan="2" style="font-family:Arial, Helvetica, sans-serif; font-size:18px; line-height:20px; font-weight:bold; margin:0; padding:0 0 10px 0;">${esc(s.data.title)}</td></tr>
+    <tr>${row}</tr>
+  </table>
 </td></tr>
 <tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
     }
+
     case "cards":
       return `<tr><td style="padding:0 16px;">
-<table role="presentation" width="100%"><tr>
-  <td width="285" valign="top" style="padding-right:30px;">
-    <img src="${esc(s.data.left.img)}" width="285" height="185" style="display:block; border:0;" alt="">
-    <div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">
-      <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${esc(s.data.left.title)}</div>
-      <div>${esc(s.data.left.body)}</div>
-      ${s.data.left.ctaText && s.data.left.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.left.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.left.ctaText)}</a></div>` : ``}
-    </div>
-  </td>
-  <td width="285" valign="top">
-    <img src="${esc(s.data.right.img)}" width="285" height="185" style="display:block; border:0;" alt="">
-    <div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">
-      <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${esc(s.data.right.title)}</div>
-      <div>${esc(s.data.right.body)}</div>
-      ${s.data.right.ctaText && s.data.right.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.right.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.right.ctaText)}</a></div>` : ``}
-    </div>
-  </td>
-</tr></table>
+  <table role="presentation" width="100%"><tr>
+    <td width="285" valign="top" style="padding-right:30px;">
+      <img src="${esc(s.data.left.img)}" width="285" height="185" style="display:block; border:0;" alt="">
+      <div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">
+        <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${esc(s.data.left.title)}</div>
+        <div>${esc(s.data.left.body)}</div>
+        ${s.data.left.ctaText && s.data.left.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.left.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.left.ctaText)}</a></div>` : ``}
+      </div>
+    </td>
+    <td width="285" valign="top">
+      <img src="${esc(s.data.right.img)}" width="285" height="185" style="display:block; border:0;" alt="">
+      <div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:#333;">
+        <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0;">${esc(s.data.right.title)}</div>
+        <div>${esc(s.data.right.body)}</div>
+        ${s.data.right.ctaText && s.data.right.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.right.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600;">${esc(s.data.right.ctaText)}</a></div>` : ``}
+      </div>
+    </td>
+  </tr></table>
 </td></tr>
 <tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
+
     case "spotlight":
       return `<tr><td style="background:#fbe232; color:#000; padding:16px;">
-<table role="presentation" width="100%"><tr>
-  <td width="180" valign="top" style="padding-right:24px;"><img src="${esc(s.data.imgA)}" width="180" height="200" style="display:block; border:0;" alt=""></td>
-  <td valign="top" style="font-family:Arial, Helvetica, sans-serif; color:inherit;">
-    <div style="text-transform:uppercase; font-size:12px; letter-spacing:.02em; margin:0 0 6px 0;">${esc(s.data.eyebrow)}</div>
-    <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0; color:inherit;">${esc(s.data.title)}</div>
-    <div style="font-size:14px; line-height:18px; color:inherit;">${esc(s.data.body)}</div>
-    ${s.data.ctaText && s.data.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.ctaUrl)}" style="color:#000; text-decoration:none; font-weight:600;">${esc(s.data.ctaText)}</a></div>` : ``}
-  </td>
-</tr></table>
+  <table role="presentation" width="100%"><tr>
+    <td width="180" valign="top" style="padding-right:24px;"><img src="${esc(s.data.imgA)}" width="180" height="200" style="display:block; border:0;" alt=""></td>
+    <td valign="top" style="font-family:Arial, Helvetica, sans-serif; color:inherit;">
+      <div style="text-transform:uppercase; font-size:12px; letter-spacing:.02em; margin:0 0 6px 0;">${esc(s.data.eyebrow)}</div>
+      <div style="font-size:18px; line-height:20px; font-weight:bold; margin:10px 0; color:inherit;">${esc(s.data.title)}</div>
+      <div style="font-size:14px; line-height:18px; color:inherit;">${esc(s.data.body)}</div>
+      ${s.data.ctaText && s.data.ctaUrl ? `<div style="padding-top:10px;"><a href="${esc(s.data.ctaUrl)}" style="color:#000; text-decoration:none; font-weight:600;">${esc(s.data.ctaText)}</a></div>` : ``}
+    </td>
+  </tr></table>
 </td></tr>
 <tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
+
     case "footer":
       return `<tr><td style="background:#161616; color:#fff; text-align:center; padding:36px 16px;">
-<div style="font-size:14px; line-height:20px; margin:10px 0;"><strong>${esc(s.data.logo)}</strong></div>
-<div style="font-size:12px; line-height:18px; margin:10px 0;">${esc(s.data.fourCs || "[4c's]")}</div>
+  <div style="font-size:14px; line-height:20px; margin:10px 0;"><strong>${esc(s.data.logo)}</strong></div>
+  <div style="font-size:12px; line-height:18px; margin:10px 0;">${esc(s.data.fourCs || "[4c's]")}</div>
 </td></tr>`;
+
     case "feedback":
       return `<tr><td style="text-align:center; font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:20px; color:#333; padding:24px 0 32px;">
-<strong>Questions? Ideas? Feedback?</strong><br>We’d love to hear it — please email
-<a href="mailto:${esc(s.data.email)}" style="color:#007da3; text-decoration:none;">${esc(s.data.email)}</a>
+  <strong>Questions? Ideas? Feedback?</strong><br>We’d love to hear it — please email
+  <a href="mailto:${esc(s.data.email)}" style="color:#007da3; text-decoration:none;">${esc(s.data.email)}</a>
 </td></tr>`;
+
     default:
       return "";
   }
