@@ -235,30 +235,40 @@ function toPreview(s) {
       `;
     }
 
-    case 'cards':
+   case 'cards': {
+  const d  = s.data || {};
+  const c1 = Object.assign(
+    { img: PH.c, title: '[Card One Title]', body: '[Short supporting copy — one or two lines.]', ctaText: 'Details →', ctaUrl: '#' },
+    d.card1 || {}
+  );
+  const c2 = Object.assign(
+    { img: PH.c, title: '[Card Two Title]', body: '[Short supporting copy — one or two lines.]', ctaText: 'Details →', ctaUrl: '#' },
+    d.card2 || {}
+  );
+
   return `
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px; table-layout:fixed; border-collapse:collapse;">
     <tr>
       <td width="285" valign="top" style="padding:0 30px 0 0;">
-        <img src="${s.data.card1.img}" width="285" height="185" style="display:block; width:285px; height:185px; border:0;" alt="">
+        <img src="${c1.img}" width="285" height="185" style="display:block; width:285px; height:185px; border:0;" alt="">
         <div class="txt">
-          <div class="title">${escapeHtml(s.data.card1.title)}</div>
-          ${escapeHtml(s.data.card1.body)}
-          <br><a href="${escapeHtml(s.data.card1.ctaUrl)}">${escapeHtml(s.data.card1.ctaText)}</a>
+          <div class="title">${escapeHtml(c1.title)}</div>
+          ${escapeHtml(c1.body)}
+          <br><a href="${escapeHtml(c1.ctaUrl)}">${escapeHtml(c1.ctaText)}</a>
         </div>
       </td>
       <td width="285" valign="top" style="padding:0;">
-        <img src="${s.data.card2.img}" width="285" height="185" style="display:block; width:285px; height:185px; border:0;" alt="">
+        <img src="${c2.img}" width="285" height="185" style="display:block; width:285px; height:185px; border:0;" alt="">
         <div class="txt">
-          <div class="title">${escapeHtml(s.data.card2.title)}</div>
-          ${escapeHtml(s.data.card2.body)}
-          <br><a href="${escapeHtml(s.data.card2.ctaUrl)}">${escapeHtml(s.data.card2.ctaText)}</a>
+          <div class="title">${escapeHtml(c2.title)}</div>
+          ${escapeHtml(c2.body)}
+          <br><a href="${escapeHtml(c2.ctaUrl)}">${escapeHtml(c2.ctaText)}</a>
         </div>
       </td>
     </tr>
   </table>
   <div class="spacer32"></div>`;
-
+}
 
 
     case "spotlight":
@@ -554,32 +564,55 @@ function toExportRow(s) {
 <tr><td style="height:24px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
     }
 
-    case 'cards':
+    case 'cards': {
+     state.sections.push({
+    type: 'cards',
+    data: {
+      card1: {
+        img: PH.c,
+        title: '[Card One Title]',
+        body: '[Short supporting copy — one or two lines.]',
+        ctaText: 'Details →',
+        ctaUrl: '#'
+      },
+      card2: {
+        img: PH.c,
+        title: '[Card Two Title]',
+        body: '[Short supporting copy — one or two lines.]',
+        ctaText: 'Details →',
+        ctaUrl: '#'
+      }
+    }
+  });
+  render();
+
   return `
 <tr>
   <td style="padding:0 0 32px 0;">
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:600px; table-layout:fixed; border-collapse:collapse;">
       <tr>
         <td valign="top" width="285" style="padding:0 30px 0 0;">
-          <img src="${s.data.card1.img}" width="285" height="185" alt="" style="display:block; border:0; width:285px; height:185px;">
+          <img src="${c1.img}" width="285" height="185" alt="" style="display:block; border:0; width:285px; height:185px;">
           <div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:__TEXT__; padding-top:10px;">
-            <strong style="color:__TITLE__; display:block; margin:10px 0;">${escapeHtml(s.data.card1.title)}</strong>
-            ${escapeHtml(s.data.card1.body)}
-            <br><a href="${escapeHtml(s.data.card1.ctaUrl)}" style="color:__LINK__; text-decoration:underline; display:inline-block; margin-top:10px;">${escapeHtml(s.data.card1.ctaText)}</a>
+            <strong style="color:__TITLE__; display:block; margin:10px 0;">${escapeHtml(c1.title)}</strong>
+            ${escapeHtml(c1.body)}
+            <br><a href="${escapeHtml(c1.ctaUrl)}" style="color:__LINK__; text-decoration:underline; display:inline-block; margin-top:10px;">${escapeHtml(c1.ctaText)}</a>
           </div>
         </td>
         <td valign="top" width="285" style="padding:0;">
-          <img src="${s.data.card2.img}" width="285" height="185" alt="" style="display:block; border:0; width:285px; height:185px;">
+          <img src="${c2.img}" width="285" height="185" alt="" style="display:block; border:0; width:285px; height:185px;">
           <div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:18px; color:__TEXT__; padding-top:10px;">
-            <strong style="color:__TITLE__; display:block; margin:10px 0;">${escapeHtml(s.data.card2.title)}</strong>
-            ${escapeHtml(s.data.card2.body)}
-            <br><a href="${escapeHtml(s.data.card2.ctaUrl)}" style="color:__LINK__; text-decoration:underline; display:inline-block; margin-top:10px;">${escapeHtml(s.data.card2.ctaText)}</a>
+            <strong style="color:__TITLE__; display:block; margin:10px 0;">${escapeHtml(c2.title)}</strong>
+            ${escapeHtml(c2.body)}
+            <br><a href="${escapeHtml(c2.ctaUrl)}" style="color:__LINK__; text-decoration:underline; display:inline-block; margin-top:10px;">${escapeHtml(c2.ctaText)}</a>
           </div>
         </td>
       </tr>
     </table>
   </td>
 </tr>`;
+}
+
 
 
     case "spotlight":
