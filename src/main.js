@@ -458,40 +458,34 @@ async function applyChanges() {
 // ==== EXPORT (Outlook-safe) ====
 function buildExport() {
   const rows = state.sections.map(toExportRow).join('');
-  return `<!DOCTYPE html>
+  return `
+<!DOCTYPE html>
 <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
 <meta charset="utf-8">
 <meta name="x-apple-disable-message-reformatting">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Newsletter Export</title>
-<!--[if mso]><style>
-  * { font-family: Arial, sans-serif !important; }
-  .arial { font-family: Arial, sans-serif !important; }
-</style><![endif]-->
+<!--[if mso]>
+<style>
+  * { font-family: Arial, Helvetica, sans-serif !important; }
+</style>
+<![endif]-->
 </head>
-<body style="margin:0; padding:0; background-color:#ffffff; font-family:Arial, Helvetica, sans-serif;">
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-    <tr><td align="center" style="padding:0;">
-      <!-- Outer frame: locked 600px width, subtle gray border -->
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-             width="600"
-             style="width:600px; border:1px solid #e5e5e5; background-color:#ffffff; border-collapse:collapse; font-family:Arial, Helvetica, sans-serif;">
-        <tr>
-          <!-- 10px inset padding inside the border -->
-          <td style="padding:10px;">
-            <!-- Inner content table: 580px -->
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-                   width="580" style="width:580px; border-collapse:collapse; font-family:Arial, Helvetica, sans-serif;">
-              ${rows}
-            </table>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
+<body style="margin:0; padding:0; background-color:#f5f5f5; font-family:Arial, Helvetica, sans-serif;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f5f5f5;">
+    <tr>
+      <td align="center" style="padding:20px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600"
+               style="width:600px; background-color:#ffffff; border:1px solid #e0e0e0; border-collapse:collapse;">
+          ${rows}
+        </table>
+      </td>
+    </tr>
   </table>
 </body>
 </html>`;
+
 }
 
 
@@ -502,10 +496,24 @@ function spacerRow(px = 24) {
 
 function toExportRow(s) {
   switch (s.type) {
-    case 'banner':
-      return `
-<tr><td align="center" style="padding:0;"><img src="${s.data.src}" width="600" height="200" alt="${escapeHtml(s.data.alt || '')}" style="display:block; width:600px; height:200px; border:0;"></td></tr>
-${spacerRow(32)}`;
+   case 'banner':
+  return `
+<tr>
+  <td align="center" style="padding:10px; background:#ffffff; border:1px solid #e0e0e0;">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" 
+           style="width:600px; border-collapse:collapse;">
+      <tr>
+        <td style="padding:0;">
+          <img src="${s.data.src}" width="600" height="${s.data.height || 200}"
+               alt="${escapeHtml(s.data.alt || 'Banner')}"
+               style="display:block; width:600px; height:${s.data.height || 200}px; border:0;">
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr><td style="height:32px; line-height:0; font-size:0;">&nbsp;</td></tr>`;
+
 
     case 'textonly': {
       const cta = (s.data.ctaText && s.data.ctaUrl) ? `<br><a href="${escapeHtml(s.data.ctaUrl)}" style="color:#007da3; text-decoration:none; font-weight:600; display:inline-block; margin-top:10px;">${escapeHtml(s.data.ctaText)}</a>` : '';
@@ -599,7 +607,7 @@ ${spacerRow(32)}`;
               <td valign="top">
                 <div style="font-size:12px; line-height:16px; font-weight:bold; letter-spacing:0.03em; text-transform:uppercase; color:${fg}; margin:10px 0 10px 0;">${eyebrow}</div>
                 <div style="font-size:18px; line-height:20px; font-weight:bold; color:${fg}; margin:10px 0 10px 0;">${title}</div>
-                <div style="font-size:14px; line-height:18px; color:${fg};">${body}${cta}</div>
+                <div style="font-size:14px; line-height:18px; color:${fg};">${body}${cta}<br></div>
               </td>
             </tr>
           </table>
