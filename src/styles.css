@@ -120,6 +120,7 @@ main { display: flex; flex-direction: column; gap: 12px; }
   margin: 0 auto;
   background: #fff;
   border: 1px dashed var(--border);
+  box-sizing: content-box;
 }
 
 /* Email preview (center area) */
