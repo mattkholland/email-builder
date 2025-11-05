@@ -1,26 +1,25 @@
 :root {
-  --maxw: 600px;
+  --maxw: 600px;          /* hard lock at 600 in UI preview */
   --accent: #FBE232;
   --bg: #fafafa;
   --surface: #ffffff;
   --text: #222;
   --muted: #666;
-  --link: #1a73e8;
+  --link: #007da3;        /* default CTA color (except Spotlight: black) */
   --border: #e5e5e5;
   --card: #ffffff;
 }
 
 * { box-sizing: border-box; }
-
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   background: var(--bg);
   color: var(--text);
 }
+a { color: var(--link); }
 
-a { color: var(--link); text-decoration: none; }
-
+/* Top bar */
 .topbar {
   position: sticky; top: 0; z-index: 5;
   background: var(--surface);
@@ -31,16 +30,29 @@ a { color: var(--link); text-decoration: none; }
   padding: 10px 12px; max-width: 1200px; margin: 0 auto;
 }
 .topbar h1 { font-size: 16px; margin: 0; font-weight: bold; }
-
-.actions { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+.topbar .actions {
+  margin-left: auto;
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
 .btn {
   border: 1px solid var(--border);
-  background: #000; color: #fff;
-  padding: 10px 12px; border-radius: 6px;
-  cursor: pointer; font-weight: 600;
+  background: #000;
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
 }
 .btn:hover { filter: brightness(1.08); }
-.btn.accent { background: #111; color: #fff; }
+.btn-green {
+  background: #1a9f4a;
+  border-color: #178a40;
+}
+.btn.accent {
+  background: #ffd84a;
+  color: #111;
+  border-color: #f1c232;
+}
 
 .layout {
   display: grid; grid-template-columns: 340px 1fr;
@@ -59,31 +71,43 @@ aside h2 { font-size: 14px; margin: 6px 0 10px; }
 .field { margin: 10px 0; }
 .field label {
   display: block; font-size: 12px; color: var(--muted);
-  margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.02em;
+  margin-bottom: 6px; text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
-.field input[type="text"], .field input[type="url"], .field textarea, .field select {
-  width: 100%; padding: 10px; border: 1px solid var(--border);
-  border-radius: 6px; background: var(--card); color: var(--text); font: inherit;
+.field input[type="text"], .field input[type="url"],
+.field textarea, .field select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
 }
 .row { display: flex; gap: 8px; }
 .row .field { flex: 1; }
-.hidden { display: none !important; }
-.muted { color: var(--muted); font-size: 12px; }
-.tiny { font-size: 12px; }
+.hint, .muted { color: var(--muted); font-size: 12px; }
+.tiny { font-size: 11px; }
 
-/* List / Cards */
+/* Cards list (left column) */
 .cards { display: flex; flex-direction: column; gap: 8px; }
 .card {
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 10px; background: var(--card);
+  padding: 10px;
+  background: var(--card);
   display: flex; gap: 10px; align-items: center;
 }
 .card h3 { margin: 0; font-size: 13px; }
 .card .mini-actions { margin-left: auto; display: flex; gap: 6px; }
 .card .mini-actions button { padding: 6px 8px; border-radius: 4px; }
 
-/* Canvas */
+/* drag’n’drop */
+.card[draggable="true"] { cursor: grab; }
+.dragging { opacity: 0.6; border-style: dashed; }
+.drop-target { outline: 2px dashed var(--accent); outline-offset: 2px; }
+
+main { display: flex; flex-direction: column; gap: 12px; }
 .canvas {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -91,19 +115,16 @@ aside h2 { font-size: 14px; margin: 6px 0 10px; }
   padding: 12px;
   display: flex; justify-content: center; overflow: auto;
 }
-/* Replace your existing .email block with this */
 .email {
   width: var(--maxw);
   margin: 0 auto;
   background: #fff;
-  border: 1px solid #e5e5e5;   /* subtle gray */
-  padding: 10px;               /* 10px inside padding */
+  border: 1px dashed var(--border);
 }
 
-
+/* Email preview (center area) */
 .email table { border-collapse: collapse; width: 100%; }
 .email img { display: block; border: 0; outline: 0; text-decoration: none; }
-
 .email .divider {
   background: var(--accent);
   color: #000;
@@ -112,19 +133,31 @@ aside h2 { font-size: 14px; margin: 6px 0 10px; }
   font-size: 13px;
   padding: 6px 10px;
 }
-
+.email .spacer24 { height: 24px; }
 .email .spacer32 { height: 32px; }
 .email .txt { font-size: 14px; line-height: 18px; color: #333; }
 .email .title {
   font-size: 18px;
   line-height: 20px;
   font-weight: bold;
-  margin: 10px 0; /* 10px before and after */
+  margin: 10px 0;           /* 10px before & after */
   color: #111;
 }
+.email a.cta {
+  display: inline-block;
+  margin-top: 10px;          /* 10px above CTA */
+  color: var(--link);
+  font-weight: 600;
+  text-decoration: none;
+}
 
-/* CTAs: 10px above */
-.email .txt a { display:inline-block; margin-top:10px; }
+/* Spotlight preview (subtle highlight while editing) */
+.spotlight-preview {
+  outline: 2px solid rgba(251, 226, 50, 0.4);
+  outline-offset: 2px;
+}
 
-/* Spotlight CTA stays black */
-.email .spotlight a { color:#000 !important; }
+/* Form controls */
+.checkbox input { margin-right: 6px; }
+.radio label { margin-right: 12px; }
+.hidden { display: none; }
