@@ -607,7 +607,7 @@ ${spacerRow(32)}`;
               <td valign="top">
                 <div style="font-size:12px; line-height:16px; font-weight:bold; letter-spacing:0.03em; text-transform:uppercase; color:${fg}; margin:10px 0 10px 0;">${eyebrow}</div>
                 <div style="font-size:18px; line-height:20px; font-weight:bold; color:${fg}; margin:10px 0 10px 0;">${title}</div>
-                <div style="font-size:14px; line-height:18px; color:${fg};">${body}${cta}<br></div>
+                <div style="font-size:14px; line-height:18px; color:${fg};">${body}${cta}</div>
               </td>
             </tr>
           </table>
