@@ -1,164 +1,276 @@
-:root {
-  --maxw: 600px;          /* hard lock at 600 in UI preview */
-  --accent: #FBE232;
-  --bg: #fafafa;
-  --surface: #ffffff;
-  --text: #222;
-  --muted: #666;
-  --link: #007da3;        /* default CTA color (except Spotlight: black) */
-  --border: #e5e5e5;
-  --card: #ffffff;
+/* Base reset-ish */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-* { box-sizing: border-box; }
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f3f4f6;
+  color: #111827;
 }
-a { color: var(--link); }
 
 /* Top bar */
 .topbar {
-  position: sticky; top: 0; z-index: 5;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
+
 .topbar .wrap {
-  display: flex; gap: 12px; align-items: center;
-  padding: 10px 12px; max-width: 1200px; margin: 0 auto;
-}
-.topbar h1 { font-size: 16px; margin: 0; font-weight: bold; }
-.topbar .actions {
-  margin-left: auto;
-  display: flex; flex-wrap: wrap; gap: 8px;
-}
-.btn {
-  border: 1px solid var(--border);
-  background: #000;
-  color: #fff;
-  padding: 10px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-}
-.btn:hover { filter: brightness(1.08); }
-.btn-green {
-  background: #1a9f4a;
-  border-color: #178a40;
-}
-.btn.accent {
-  background: #ffd84a;
-  color: #111;
-  border-color: #f1c232;
-}
-
-.layout {
-  display: grid; grid-template-columns: 340px 1fr;
-  gap: 16px; max-width: 1200px; margin: 0 auto; padding: 16px;
-}
-aside {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
-  height: calc(100vh - 76px);
-  position: sticky; top: 64px;
-  overflow: auto;
-}
-aside h2 { font-size: 14px; margin: 6px 0 10px; }
-.field { margin: 10px 0; }
-.field label {
-  display: block; font-size: 12px; color: var(--muted);
-  margin-bottom: 6px; text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-.field input[type="text"], .field input[type="url"],
-.field textarea, .field select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--card);
-  color: var(--text);
-  font: inherit;
-}
-.row { display: flex; gap: 8px; }
-.row .field { flex: 1; }
-.hint, .muted { color: var(--muted); font-size: 12px; }
-.tiny { font-size: 11px; }
-
-/* Cards list (left column) */
-.cards { display: flex; flex-direction: column; gap: 8px; }
-.card {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px;
-  background: var(--card);
-  display: flex; gap: 10px; align-items: center;
-}
-.card h3 { margin: 0; font-size: 13px; }
-.card .mini-actions { margin-left: auto; display: flex; gap: 6px; }
-.card .mini-actions button { padding: 6px 8px; border-radius: 4px; }
-
-/* drag’n’drop */
-.card[draggable="true"] { cursor: grab; }
-.dragging { opacity: 0.6; border-style: dashed; }
-.drop-target { outline: 2px dashed var(--accent); outline-offset: 2px; }
-
-main { display: flex; flex-direction: column; gap: 12px; }
-.canvas {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px;
-  display: flex; justify-content: center; overflow: auto;
-}
-.email {
-  width: var(--maxw);
+  max-width: 1280px;
   margin: 0 auto;
-  background: #fff;
-  border: 1px dashed var(--border);
-  box-sizing: content-box;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-/* Email preview (center area) */
-.email table { border-collapse: collapse; width: 100%; }
-.email img { display: block; border: 0; outline: 0; text-decoration: none; }
-.email .divider {
-  background: var(--accent);
-  color: #000;
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 13px;
-  padding: 6px 10px;
-}
-.email .spacer24 { height: 24px; }
-.email .spacer32 { height: 32px; }
-.email .txt { font-size: 14px; line-height: 18px; color: #333; }
-.email .title {
+.topbar h1 {
   font-size: 18px;
-  line-height: 20px;
-  font-weight: bold;
-  margin: 10px 0;           /* 10px before & after */
-  color: #111;
-}
-.email a.cta {
-  display: inline-block;
-  margin-top: 10px;          /* 10px above CTA */
-  color: var(--link);
   font-weight: 600;
-  text-decoration: none;
+  margin: 0;
 }
 
-/* Spotlight preview (subtle highlight while editing) */
-.spotlight-preview {
-  outline: 2px solid rgba(251, 226, 50, 0.4);
-  outline-offset: 2px;
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
 }
 
-/* Form controls */
-.checkbox input { margin-right: 6px; }
-.radio label { margin-right: 12px; }
-.hidden { display: none; }
+/* Buttons */
+.btn {
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+}
+
+.btn-green {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+}
+
+.btn-green:hover {
+  background: #000000;
+}
+
+/* Main layout */
+.layout {
+  max-width: 1280px;
+  margin: 20px auto;
+  padding: 0 20px 24px;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* Sidebar: properties panel */
+.layout > aside {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  padding: 14px 14px 16px;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.layout > aside h2 {
+  font-size: 14px;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.field label {
+  font-size: 12px;
+  color: #4b5563;
+}
+
+.field input,
+.field textarea {
+  font-size: 13px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  outline: none;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: #111827;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.muted {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Main builder area */
+.builder-main {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  padding: 14px;
+  display: flex;
+  gap: 16px;
+  min-height: 520px;
+}
+
+/* Section list panel */
+.section-list-panel {
+  width: 320px;
+  min-width: 260px;
+  max-width: 360px;
+  border-radius: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.panel-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.panel-header p {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Cards = your section list */
+.cards {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+/* If your cards already have styles, you can keep them; this is a safe baseline */
+.cards .card {
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
+}
+
+.cards .card:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.cards .card.is-active {
+  border-color: #111827;
+  box-shadow: 0 0 0 1px #111827;
+  background: #111827;
+  color: #f9fafb;
+}
+
+/* Preview panel */
+.preview-panel {
+  flex: 1;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  padding: 10px 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preview-panel .panel-header {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+/* Canvas & email preview */
+.canvas {
+  flex: 1;
+  background: #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Make sure the email is centered and locked at 600px width */
+.email {
+  width: 600px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Tiny helper text */
+.tiny {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Responsive tweaks */
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .builder-main {
+    flex-direction: column;
+  }
+
+  .section-list-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+}
