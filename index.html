@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outlook Newsletter Builder</title>
-  <link rel="stylesheet" href="src/styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="topbar">
@@ -38,23 +38,31 @@
       <form id="editor" class="editor hidden" autocomplete="off">
         <!-- Image (Banner, 50/50, Cards, Spotlight) -->
         <div class="field-group" data-types="banner fifty cards spotlight">
-          <label>Image</label>
+          <label class="field-label">Image</label>
           <div class="field">
             <label class="field-label">Upload image</label>
             <input type="file" id="imageFile" accept="image/*" />
           </div>
           <div class="field">
             <label class="field-label">Image URL</label>
-            <input type="url" id="imageUrl" placeholder="https://example.com/image.jpg" />
+            <input
+              type="url"
+              id="imageUrl"
+              placeholder="https://example.com/placeholder-image.jpg"
+            />
           </div>
-          <div class="hint">Use either upload or URL.</div>
+          <div class="hint">Use either upload or URL. A placeholder image is used by default.</div>
         </div>
 
         <!-- Eyebrow (Spotlight only) -->
         <div class="field-group" data-types="spotlight">
           <div class="field">
-            <label for="eyebrowInput" class="field-label">Eyebrow (Spotlight)</label>
-            <input type="text" id="eyebrowInput" placeholder="EYEBROW" />
+            <label for="eyebrowInput" class="field-label">Eyebrow</label>
+            <input
+              type="text"
+              id="eyebrowInput"
+              placeholder="SPOTLIGHT"
+            />
           </div>
         </div>
 
@@ -62,7 +70,11 @@
         <div class="field-group" data-types="text divider fifty cards spotlight feedback">
           <div class="field">
             <label for="titleInput" class="field-label">Title</label>
-            <input type="text" id="titleInput" placeholder="[Title]" />
+            <input
+              type="text"
+              id="titleInput"
+              placeholder="Add a short, clear title"
+            />
           </div>
         </div>
 
@@ -70,7 +82,11 @@
         <div class="field-group" data-types="text fifty cards spotlight feedback">
           <div class="field">
             <label for="bodyInput" class="field-label">Body</label>
-            <textarea id="bodyInput" rows="4" placeholder="[Body copy]"></textarea>
+            <textarea
+              id="bodyInput"
+              rows="4"
+              placeholder="Add supporting copy that explains the key message."
+            ></textarea>
           </div>
         </div>
 
@@ -79,11 +95,19 @@
           <div class="field-row">
             <div class="field">
               <label for="ctaTextInput" class="field-label">CTA text</label>
-              <input type="text" id="ctaTextInput" placeholder="Learn more →" />
+              <input
+                type="text"
+                id="ctaTextInput"
+                placeholder="Learn more →"
+              />
             </div>
             <div class="field">
               <label for="ctaUrlInput" class="field-label">CTA URL</label>
-              <input type="url" id="ctaUrlInput" placeholder="https://example.com" />
+              <input
+                type="url"
+                id="ctaUrlInput"
+                placeholder="https://example.com"
+              />
             </div>
           </div>
         </div>
@@ -92,11 +116,19 @@
         <div class="field-group" data-types="divider">
           <div class="field">
             <label for="dividerTitleInput" class="field-label">Divider title</label>
-            <input type="text" id="dividerTitleInput" placeholder="Section Title" />
+            <input
+              type="text"
+              id="dividerTitleInput"
+              placeholder="Section heading label"
+            />
           </div>
           <div class="field">
             <label for="dividerBgColorInput" class="field-label">Divider background color</label>
-            <input type="text" id="dividerBgColorInput" value="#FBE232" />
+            <input
+              type="text"
+              id="dividerBgColorInput"
+              value="#FBE232"
+            />
           </div>
         </div>
 
@@ -104,7 +136,11 @@
         <div class="field-group" data-types="spotlight">
           <div class="field">
             <label for="spotlightBgColorInput" class="field-label">Spotlight background color</label>
-            <input type="text" id="spotlightBgColorInput" value="#FBE232" />
+            <input
+              type="text"
+              id="spotlightBgColorInput"
+              value="#FBE232"
+            />
           </div>
         </div>
 
@@ -152,7 +188,7 @@
       <section class="section-list-panel">
         <div class="panel-header">
           <h2>Sections</h2>
-          <p>Click a card to edit. Use the trash icon to delete.</p>
+          <p>Click a card to edit. Drag to reorder.</p>
         </div>
         <div id="list" class="cards"></div>
       </section>
@@ -174,6 +210,6 @@
     </main>
   </div>
 
-  <script src="src/main.js" defer></script>
+  <script src="main.js" defer></script>
 </body>
 </html>
