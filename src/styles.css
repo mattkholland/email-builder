@@ -97,6 +97,7 @@ body {
   gap: 10px;
   max-height: calc(100vh - 120px);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .properties h2 {
@@ -144,6 +145,7 @@ body {
   border-radius: 8px;
   border: 1px solid #d1d5db;
   outline: none;
+  max-width: 100%;
 }
 
 .field input:focus,
@@ -328,6 +330,15 @@ textarea {
 
 .icon-btn:hover {
   background: rgba(15, 23, 42, 0.08);
+}
+
+/* Drag states */
+.card.dragging {
+  opacity: 0.6;
+}
+
+.card.drag-over {
+  outline: 2px dashed #111827;
 }
 
 /* Preview panel */
