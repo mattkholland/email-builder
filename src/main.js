@@ -27,10 +27,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedId = null;
   let nextId = 1;
 
-  const PLACEHOLDER_BANNER =
-    "https://via.placeholder.com/600x200?text=Banner+Image";
-  const PLACEHOLDER_IMAGE =
-    "https://via.placeholder.com/280x180?text=Placeholder+Image";
+const PLACEHOLDER_BANNER =
+  "https://via.placeholder.com/600x200?text=Banner+Image";
+const PLACEHOLDER_IMAGE =
+  "https://via.placeholder.com/280x180?text=Placeholder+Image";
 
   // ---------- helpers: data ----------
 
