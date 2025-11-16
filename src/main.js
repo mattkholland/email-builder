@@ -273,13 +273,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const flipped = !!d.flipped;
 
       // no 16px vertical padding; just horizontal
-      let imgTd = '<td width="50%" valign="top" style="padding:0 12px;">';
+    let imgTd = '<td width="50%" valign="top" style="padding:0;">';
+
       if (img) {
         imgTd += '<img src="' + img + '" alt="" style="display:block;width:100%;height:auto;border:0;" />';
       }
       imgTd += '</td>';
 
-      let textTd = '<td width="50%" valign="top" style="padding:0 12px;">';
+  let textTd = '<td width="50%" valign="top" style="padding:0;">';
       if (title) {
         textTd += '<h2 style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#111111;">' + title + '</h2>';
       }
@@ -375,7 +376,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function buildEmailHtml() {
     let html = "";
-    html += '<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;background-color:#ffffff;">';
+    html += '<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" align="center" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;background-color:#ffffff;border:1px solid #e5e7eb;padding:16px;">';
+
     html += "<tbody>";
     sections.forEach(section => {
       html += buildSectionHtml(section);
