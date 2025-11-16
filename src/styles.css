@@ -1,4 +1,3 @@
-/* Base reset-ish */
 *,
 *::before,
 *::after {
@@ -61,29 +60,33 @@ body {
   transform: translateY(-1px);
 }
 
-.btn-green {
+.btn-primary {
   background: #111827;
   color: #ffffff;
   border-color: #111827;
 }
 
-.btn-green:hover {
+.btn-primary:hover {
   background: #000000;
 }
 
-/* Main layout */
+.full-width {
+  width: 100%;
+}
+
+/* Layout: left properties, right builder */
 .layout {
   max-width: 1280px;
   margin: 20px auto;
   padding: 0 20px 24px;
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: 320px minmax(0, 1fr);
   gap: 16px;
   align-items: flex-start;
 }
 
-/* Sidebar: properties panel */
-.layout > aside {
+/* Properties panel */
+.properties {
   background: #ffffff;
   border-radius: 14px;
   border: 1px solid #e5e7eb;
@@ -92,22 +95,44 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
-.layout > aside h2 {
+.properties h2 {
   font-size: 14px;
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   font-weight: 600;
+}
+
+.muted {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Editor fields */
+.editor {
+  margin-top: 8px;
+}
+
+.field-group {
+  margin-bottom: 10px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
-.field label {
+.field-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.field-label {
   font-size: 12px;
   color: #4b5563;
 }
@@ -126,17 +151,74 @@ body {
   border-color: #111827;
 }
 
-.row {
-  display: flex;
-  gap: 8px;
+textarea {
+  resize: vertical;
 }
 
-.muted {
+.hint {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* Toggle switch */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
+}
+
+.toggle input {
+  display: none;
+}
+
+.toggle-switch {
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: #d1d5db;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.toggle-switch::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #ffffff;
+  transition: transform 0.15s ease;
+}
+
+.toggle input:checked + .toggle-switch {
+  background: #111827;
+}
+
+.toggle input:checked + .toggle-switch::before {
+  transform: translateX(14px);
+}
+
+.toggle-label {
   color: #6b7280;
 }
 
-/* Main builder area */
+.radio-row {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.radio-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Builder main: section list + preview */
 .builder-main {
   background: #ffffff;
   border-radius: 14px;
@@ -179,7 +261,7 @@ body {
   color: #6b7280;
 }
 
-/* Cards = your section list */
+/* Cards (section list) */
 .cards {
   margin-top: 4px;
   display: flex;
@@ -189,8 +271,7 @@ body {
   padding-right: 2px;
 }
 
-/* If your cards already have styles, you can keep them; this is a safe baseline */
-.cards .card {
+.card {
   background: #ffffff;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
@@ -204,16 +285,49 @@ body {
   transition: background 0.1s ease, border-color 0.1s ease, box-shadow 0.1s ease;
 }
 
-.cards .card:hover {
+.card:hover {
   background: #f3f4f6;
   border-color: #d1d5db;
 }
 
-.cards .card.is-active {
+.card.is-active {
   border-color: #111827;
   box-shadow: 0 0 0 1px #111827;
   background: #111827;
   color: #f9fafb;
+}
+
+.card-main {
+  min-width: 0;
+}
+
+.card-type {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  padding: 4px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.icon-btn:hover {
+  background: rgba(15, 23, 42, 0.08);
 }
 
 /* Preview panel */
@@ -246,17 +360,22 @@ body {
   align-items: flex-start;
 }
 
-/* Make sure the email is centered and locked at 600px width */
-.email {
+/* The actual email markup container */
+.email-preview {
   width: 600px;
   max-width: 100%;
   margin: 0 auto;
 }
 
-/* Tiny helper text */
-.tiny {
-  font-size: 11px;
-  line-height: 1.4;
+.placeholder {
+  font-size: 13px;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* Utilities */
+.hidden {
+  display: none;
 }
 
 /* Responsive tweaks */
