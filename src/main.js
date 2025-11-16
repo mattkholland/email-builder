@@ -27,6 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedId = null;
   let nextId = 1;
 
+  const PLACEHOLDER_BANNER =
+    "https://via.placeholder.com/600x200?text=Banner+Image";
+  const PLACEHOLDER_IMAGE =
+    "https://via.placeholder.com/280x180?text=Placeholder+Image";
+
   // ---------- helpers: data ----------
 
   function createSection(type, options = {}) {
@@ -35,43 +40,72 @@ document.addEventListener("DOMContentLoaded", () => {
 
     switch (type) {
       case "banner":
-        data = { imageUrl: "" };
+        data = { imageUrl: PLACEHOLDER_BANNER };
         break;
       case "text":
-        data = { title: "", body: "", ctaText: "", ctaUrl: "" };
+        data = {
+          title: "Add a short, clear title",
+          body:
+            "Use this text block to introduce the topic, share key details, and explain why it matters.",
+          ctaText: "Learn more →",
+          ctaUrl: "https://example.com"
+        };
         break;
       case "divider":
-        data = { title: "", bgColor: "#FBE232" };
+        data = {
+          title: "Section heading label",
+          bgColor: "#FBE232"
+        };
         break;
       case "fifty":
         data = {
-          imageUrl: "",
-          title: "",
-          body: "",
-          ctaText: "",
-          ctaUrl: "",
+          imageUrl: PLACEHOLDER_IMAGE,
+          title: "Add a compelling 50/50 title",
+          body:
+            "Use this two-column layout to pair a strong visual with supporting copy.",
+          ctaText: "Explore more →",
+          ctaUrl: "https://example.com",
           flipped: options.flipped === true
         };
         break;
       case "cards":
         data = {
-          left: { imageUrl: "", title: "", body: "", ctaText: "", ctaUrl: "" },
-          right: { imageUrl: "", title: "", body: "", ctaText: "", ctaUrl: "" }
+          left: {
+            imageUrl: PLACEHOLDER_IMAGE,
+            title: "Left card title",
+            body: "Brief description or highlight for the left card.",
+            ctaText: "View details →",
+            ctaUrl: "https://example.com"
+          },
+          right: {
+            imageUrl: PLACEHOLDER_IMAGE,
+            title: "Right card title",
+            body: "Brief description or highlight for the right card.",
+            ctaText: "View details →",
+            ctaUrl: "https://example.com"
+          }
         };
         break;
       case "spotlight":
         data = {
-          eyebrow: "",
-          imageUrl: "",
-          title: "",
-          body: "",
-          ctaText: "",
-          ctaUrl: "",
+          eyebrow: "SPOTLIGHT",
+          imageUrl: PLACEHOLDER_IMAGE,
+          title: "Feature headline or key announcement",
+          body:
+            "Use the spotlight section to highlight a key story, feature, or announcement.",
+          ctaText: "Read the full story →",
+          ctaUrl: "https://example.com",
           bgColor: "#FBE232"
         };
         break;
       case "feedback":
-        data = { title: "", body: "", ctaText: "", ctaUrl: "" };
+        data = {
+          title: "We’d love your feedback",
+          body:
+            "Tell us what’s working well and where we can improve your newsletter experience.",
+          ctaText: "Share feedback →",
+          ctaUrl: "https://example.com"
+        };
         break;
       case "footer":
         data = {};
@@ -123,6 +157,25 @@ document.addEventListener("DOMContentLoaded", () => {
     return sections.find(s => s.id === selectedId) || null;
   }
 
+  // ---------- drag & drop helpers ----------
+
+  function reorderSections(fromId, toId) {
+    if (fromId === toId) return;
+    const fromIndex = sections.findIndex(s => s.id === fromId);
+    const toIndex = sections.findIndex(s => s.id === toId);
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    const [moved] = sections.splice(fromIndex, 1);
+    sections.splice(toIndex, 0, moved);
+
+    renderList();
+    renderPreview();
+
+    if (selectedId === fromId) {
+      selectSection(fromId);
+    }
+  }
+
   // ---------- rendering: email HTML ----------
 
   function buildCardColumn(cardData) {
@@ -166,8 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let html = "";
 
     if (section.type === "banner") {
-      const src = escapeHtml(d.imageUrl || "");
-      if (!src) return "";
+      const src = escapeHtml(d.imageUrl || PLACEHOLDER_BANNER);
       html += '<tr><td align="center" style="padding:0;">';
       html += '<img src="' + src + '" width="600" style="display:block;width:600px;max-width:100%;height:auto;border:0;line-height:0;" alt="" />';
       html += '</td></tr>';
@@ -206,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     else if (section.type === "fifty") {
-      const img = escapeHtml(d.imageUrl || "");
+      const img = escapeHtml(d.imageUrl || PLACEHOLDER_IMAGE);
       const title = escapeHtml(d.title || "");
       const body = nl2br(d.body || "");
       const ctaText = escapeHtml(d.ctaText || "");
@@ -249,7 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     else if (section.type === "spotlight") {
       const eyebrow = escapeHtml(d.eyebrow || "");
-      const img = escapeHtml(d.imageUrl || "");
+      const img = escapeHtml(d.imageUrl || PLACEHOLDER_IMAGE);
       const title = escapeHtml(d.title || "");
       const body = nl2br(d.body || "");
       const ctaText = escapeHtml(d.ctaText || "");
@@ -281,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const ctaText = escapeHtml(d.ctaText || "");
       const ctaUrl = escapeHtml(d.ctaUrl || "");
 
-      html += '<tr><td style="padding:24px 24px 8px;border-top:1px solid #e5e7eb;">';
+      html += '<tr><td style="padding:24px 24px 8px;border-top:1px solid #e5e7eb;text-align:center;">';
       if (title) {
         html += '<h3 style="margin:0 0 8px;font-size:16px;font-weight:bold;color:#111111;">' + title + '</h3>';
       }
@@ -291,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
       html += '</td></tr>';
 
       if (ctaText && ctaUrl) {
-        html += '<tr><td style="padding:0 24px 24px;">';
+        html += '<tr><td style="padding:0 24px 24px;text-align:center;">';
         html += '<a href="' + ctaUrl + '" style="display:inline-block;padding:8px 14px;margin-top:8px;font-size:13px;color:#007da3;text-decoration:underline;">' + ctaText + '</a>';
         html += '</td></tr>';
       }
@@ -331,6 +383,9 @@ document.addEventListener("DOMContentLoaded", () => {
         card.classList.add("is-active");
       }
 
+      // draggable
+      card.draggable = true;
+
       card.innerHTML =
         '<div class="card-main">' +
           '<div class="card-type">' + escapeHtml(getSectionLabel(section)) + '</div>' +
@@ -340,6 +395,7 @@ document.addEventListener("DOMContentLoaded", () => {
           '<button type="button" class="icon-btn card-delete" title="Delete section">🗑</button>' +
         '</div>';
 
+      // click handling (select / delete)
       card.addEventListener("click", (e) => {
         const deleteBtn = e.target.closest(".card-delete");
         if (deleteBtn) {
@@ -350,6 +406,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const id = Number(card.dataset.id);
         selectSection(id);
+      });
+
+      // drag & drop events
+      card.addEventListener("dragstart", (e) => {
+        card.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", card.dataset.id);
+      });
+
+      card.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        const dragging = listEl.querySelector(".dragging");
+        if (!dragging || dragging === card) return;
+        card.classList.add("drag-over");
+      });
+
+      card.addEventListener("dragleave", () => {
+        card.classList.remove("drag-over");
+      });
+
+      card.addEventListener("drop", (e) => {
+        e.preventDefault();
+        card.classList.remove("drag-over");
+        const fromId = Number(e.dataTransfer.getData("text/plain"));
+        const toId = Number(card.dataset.id);
+        reorderSections(fromId, toId);
+      });
+
+      card.addEventListener("dragend", () => {
+        card.classList.remove("dragging");
+        const others = listEl.querySelectorAll(".drag-over");
+        others.forEach(el => el.classList.remove("drag-over"));
       });
 
       listEl.appendChild(card);
@@ -403,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const d = section.data || {};
 
     if (section.type === "banner") {
-      imageUrlInput.value = d.imageUrl || "";
+      imageUrlInput.value = d.imageUrl || PLACEHOLDER_BANNER;
     } else if (section.type === "text") {
       titleInput.value = d.title || "";
       bodyInput.value = d.body || "";
@@ -413,7 +501,7 @@ document.addEventListener("DOMContentLoaded", () => {
       dividerTitleInput.value = d.title || "";
       dividerBgColorInput.value = d.bgColor || "#FBE232";
     } else if (section.type === "fifty") {
-      imageUrlInput.value = d.imageUrl || "";
+      imageUrlInput.value = d.imageUrl || PLACEHOLDER_IMAGE;
       titleInput.value = d.title || "";
       bodyInput.value = d.body || "";
       ctaTextInput.value = d.ctaText || "";
@@ -422,14 +510,14 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (section.type === "cards") {
       const side = getCardSide();
       const card = (d[side] || {});
-      imageUrlInput.value = card.imageUrl || "";
+      imageUrlInput.value = card.imageUrl || PLACEHOLDER_IMAGE;
       titleInput.value = card.title || "";
       bodyInput.value = card.body || "";
       ctaTextInput.value = card.ctaText || "";
       ctaUrlInput.value = card.ctaUrl || "";
     } else if (section.type === "spotlight") {
       eyebrowInput.value = d.eyebrow || "";
-      imageUrlInput.value = d.imageUrl || "";
+      imageUrlInput.value = d.imageUrl || PLACEHOLDER_IMAGE;
       titleInput.value = d.title || "";
       bodyInput.value = d.body || "";
       ctaTextInput.value = d.ctaText || "";
@@ -464,45 +552,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (type === "banner") {
-      d.imageUrl = uploadedDataUrl || imageUrlInput.value.trim();
+      d.imageUrl = uploadedDataUrl || imageUrlInput.value.trim() || PLACEHOLDER_BANNER;
     } else if (type === "text") {
-      d.title = titleInput.value.trim();
-      d.body = bodyInput.value;
-      d.ctaText = ctaTextInput.value.trim();
-      d.ctaUrl = ctaUrlInput.value.trim();
+      d.title = titleInput.value.trim() || "Add a short, clear title";
+      d.body = bodyInput.value || "";
+      d.ctaText = ctaTextInput.value.trim() || "Learn more →";
+      d.ctaUrl = ctaUrlInput.value.trim() || "https://example.com";
     } else if (type === "divider") {
-      d.title = dividerTitleInput.value.trim();
+      d.title = dividerTitleInput.value.trim() || "Section heading label";
       d.bgColor = dividerBgColorInput.value.trim() || "#FBE232";
     } else if (type === "fifty") {
-      d.imageUrl = uploadedDataUrl || imageUrlInput.value.trim();
-      d.title = titleInput.value.trim();
-      d.body = bodyInput.value;
-      d.ctaText = ctaTextInput.value.trim();
-      d.ctaUrl = ctaUrlInput.value.trim();
+      d.imageUrl = uploadedDataUrl || imageUrlInput.value.trim() || PLACEHOLDER_IMAGE;
+      d.title = titleInput.value.trim() || "Add a compelling 50/50 title";
+      d.body = bodyInput.value || "";
+      d.ctaText = ctaTextInput.value.trim() || "Explore more →";
+      d.ctaUrl = ctaUrlInput.value.trim() || "https://example.com";
       d.flipped = flip5050Input.checked;
     } else if (type === "cards") {
       const side = getCardSide();
       d.left = d.left || {};
       d.right = d.right || {};
       const card = side === "right" ? d.right : d.left;
-      card.imageUrl = uploadedDataUrl || imageUrlInput.value.trim();
-      card.title = titleInput.value.trim();
-      card.body = bodyInput.value;
-      card.ctaText = ctaTextInput.value.trim();
-      card.ctaUrl = ctaUrlInput.value.trim();
+      card.imageUrl = uploadedDataUrl || imageUrlInput.value.trim() || PLACEHOLDER_IMAGE;
+      card.title = titleInput.value.trim() || (side === "right" ? "Right card title" : "Left card title");
+      card.body = bodyInput.value || "";
+      card.ctaText = ctaTextInput.value.trim() || "View details →";
+      card.ctaUrl = ctaUrlInput.value.trim() || "https://example.com";
     } else if (type === "spotlight") {
-      d.imageUrl = uploadedDataUrl || imageUrlInput.value.trim();
-      d.eyebrow = eyebrowInput.value.trim();
-      d.title = titleInput.value.trim();
-      d.body = bodyInput.value;
-      d.ctaText = ctaTextInput.value.trim();
-      d.ctaUrl = ctaUrlInput.value.trim();
+      d.imageUrl = uploadedDataUrl || imageUrlInput.value.trim() || PLACEHOLDER_IMAGE;
+      d.eyebrow = eyebrowInput.value.trim() || "SPOTLIGHT";
+      d.title = titleInput.value.trim() || "Feature headline or key announcement";
+      d.body = bodyInput.value || "";
+      d.ctaText = ctaTextInput.value.trim() || "Read the full story →";
+      d.ctaUrl = ctaUrlInput.value.trim() || "https://example.com";
       d.bgColor = spotlightBgColorInput.value.trim() || "#FBE232";
     } else if (type === "feedback") {
-      d.title = titleInput.value.trim();
-      d.body = bodyInput.value;
-      d.ctaText = ctaTextInput.value.trim();
-      d.ctaUrl = ctaUrlInput.value.trim();
+      d.title = titleInput.value.trim() || "We’d love your feedback";
+      d.body = bodyInput.value || "";
+      d.ctaText = ctaTextInput.value.trim() || "Share feedback →";
+      d.ctaUrl = ctaUrlInput.value.trim() || "https://example.com";
     }
 
     section.data = d;
