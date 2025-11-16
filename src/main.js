@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function buildCardColumn(cardData) {
     const img = escapeHtml(cardData.imageUrl || "");
-       const title = escapeHtml(cardData.title || "");
+    const title = escapeHtml(cardData.title || "");
     const body = nl2br(cardData.body || "");
     const ctaText = escapeHtml(cardData.ctaText || "");
     const ctaUrl = escapeHtml(cardData.ctaUrl || "");
@@ -194,12 +194,14 @@ document.addEventListener("DOMContentLoaded", () => {
     html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">';
 
     if (img) {
-      html += '<tr><td style="padding:0 0 8px;">';
+      // 4px between image and title comes from this 4px bottom padding
+      html += '<tr><td style="padding:0 0 4px;">';
       html += '<img src="' + img + '" alt="" style="display:block;width:100%;height:auto;border:0;" />';
       html += '</td></tr>';
     }
     if (title) {
-      html += '<tr><td style="padding:0 0 4px;">';
+      // extra space below title for breathing room
+      html += '<tr><td style="padding:0 0 8px;">';
       html += '<h3 style="margin:0;font-size:15px;font-weight:bold;color:#111111;">' + title + '</h3>';
       html += '</td></tr>';
     }
@@ -237,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       html += '<tr><td style="padding:16px 16px 8px;">';
       if (title) {
-        html += '<h2 style="margin:0 0 8px;font-size:18px;font-weight:bold;color:#111111;">' + title + '</h2>';
+        html += '<h2 style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#111111;">' + title + '</h2>';
       }
       if (body) {
         html += '<p style="margin:0;font-size:14px;line-height:1.5;color:#444444;">' + body + '</p>';
@@ -256,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const bg = escapeHtml(d.bgColor || "#FBE232");
       html += '<tr><td style="padding:0;">';
       html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">';
-      html += '<tr><td style="padding:10px 16px;background-color:' + bg + ';text-align:left;">';
+      html += '<tr><td style="padding:6px 16px;background-color:' + bg + ';text-align:left;vertical-align:middle;">';
       html += '<span style="font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;color:#111111;">' + title + '</span>';
       html += '</td></tr></table></td></tr>';
     }
@@ -277,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let textTd = '<td width="50%" valign="top" style="padding:16px 12px;">';
       if (title) {
-        textTd += '<h2 style="margin:0 0 8px;font-size:18px;font-weight:bold;color:#111111;">' + title + '</h2>';
+        textTd += '<h2 style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#111111;">' + title + '</h2>';
       }
       if (body) {
         textTd += '<p style="margin:0;font-size:14px;line-height:1.5;color:#444444;">' + body + '</p>';
@@ -317,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
         html += '<div style="font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;color:#111111;margin-bottom:6px;">' + eyebrow + '</div>';
       }
       if (title) {
-        html += '<h2 style="margin:0 0 8px;font-size:20px;font-weight:bold;color:#111111;">' + title + '</h2>';
+        html += '<h2 style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#111111;">' + title + '</h2>';
       }
       if (img) {
         html += '<div style="margin:0 0 10px;"><img src="' + img + '" alt="" style="display:block;width:100%;height:auto;border:0;" /></div>';
@@ -339,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       html += '<tr><td style="padding:16px 16px 8px;border-top:1px solid #e5e7eb;text-align:center;">';
       if (title) {
-        html += '<h3 style="margin:0 0 8px;font-size:16px;font-weight:bold;color:#111111;">' + title + '</h3>';
+        html += '<h3 style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#111111;">' + title + '</h3>';
       }
       if (body) {
         html += '<p style="margin:0;font-size:13px;line-height:1.5;color:#444444;">' + body + '</p>';
