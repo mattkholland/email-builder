@@ -344,6 +344,7 @@ textarea {
 /* Preview panel */
 .preview-panel {
   flex: 1;
+  min-width: 0; /* prevents flex child from forcing overflow */
   border-radius: 12px;
   border: 1px solid #e5e7eb;
   background: #f9fafb;
@@ -369,6 +370,7 @@ textarea {
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  max-width: 100%;
 }
 
 /* The actual email markup container */
