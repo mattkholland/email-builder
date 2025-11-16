@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outlook Newsletter Builder</title>
-  <link rel="stylesheet" href="src/styles.css" />
+  <link rel="stylesheet" href="src/style.css" />
 </head>
 <body>
   <header class="topbar">
@@ -19,6 +19,7 @@
         <button class="btn" data-type="fifty" data-flipped="true">+ 50/50 (flipped)</button>
         <button class="btn" data-type="cards">+ 2 Cards</button>
         <button class="btn" data-type="spotlight">+ Spotlight</button>
+        <button class="btn" data-type="spacer">+ Spacer</button>
         <button class="btn" data-type="footer">+ Footer</button>
         <button class="btn" data-type="feedback">+ Feedback</button>
         <!-- Export -->
@@ -48,10 +49,12 @@
             <input
               type="url"
               id="imageUrl"
-              placeholder="https://example.com/placeholder-image.jpg"
+              placeholder="https://example.com/your-image.jpg"
             />
           </div>
-          <div class="hint">Use either upload or URL. A placeholder image is used by default.</div>
+          <div class="hint">
+            Use either upload or URL. A local placeholder image is used by default.
+          </div>
         </div>
 
         <!-- Eyebrow (Spotlight only) -->
