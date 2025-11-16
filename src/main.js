@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function buildCardColumn(cardData) {
     const img = escapeHtml(cardData.imageUrl || "");
-    const title = escapeHtml(cardData.title || "");
+       const title = escapeHtml(cardData.title || "");
     const body = nl2br(cardData.body || "");
     const ctaText = escapeHtml(cardData.ctaText || "");
     const ctaUrl = escapeHtml(cardData.ctaUrl || "");
@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (ctaText && ctaUrl) {
       html += '<tr><td style="padding:4px 0 0;">';
-      html += '<a href="' + ctaUrl + '" style="font-size:13px;color:#007da3;text-decoration:underline;">' + ctaText + '</a>';
+      html += '<a href="' + ctaUrl + '" style="font-size:13px;color:#007da3;text-decoration:none;">' + ctaText + '</a>';
       html += '</td></tr>';
     }
 
@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (ctaText && ctaUrl) {
         html += '<tr><td style="padding:0 16px 16px;">';
-        html += '<a href="' + ctaUrl + '" style="font-size:14px;color:#007da3;text-decoration:underline;">' + ctaText + '</a>';
+        html += '<a href="' + ctaUrl + '" style="font-size:14px;color:#007da3;text-decoration:none;">' + ctaText + '</a>';
         html += '</td></tr>';
       }
     }
@@ -283,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
         textTd += '<p style="margin:0;font-size:14px;line-height:1.5;color:#444444;">' + body + '</p>';
       }
       if (ctaText && ctaUrl) {
-        textTd += '<div style="margin-top:8px;"><a href="' + ctaUrl + '" style="font-size:14px;color:#007da3;text-decoration:underline;">' + ctaText + '</a></div>';
+        textTd += '<div style="margin-top:8px;"><a href="' + ctaUrl + '" style="font-size:14px;color:#007da3;text-decoration:none;">' + ctaText + '</a></div>';
       }
       textTd += '</td>';
 
@@ -326,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
         html += '<p style="margin:0;font-size:14px;line-height:1.5;color:#111111;">' + body + '</p>';
       }
       if (ctaText && ctaUrl) {
-        html += '<div style="margin-top:8px;"><a href="' + ctaUrl + '" style="font-size:14px;color:#000000;text-decoration:underline;">' + ctaText + '</a></div>';
+        html += '<div style="margin-top:8px;"><a href="' + ctaUrl + '" style="font-size:14px;color:#000000;text-decoration:none;">' + ctaText + '</a></div>';
       }
       html += '</td></tr>';
     }
@@ -348,7 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (ctaText && ctaUrl) {
         html += '<tr><td style="padding:0 16px 16px;text-align:center;">';
-        html += '<a href="' + ctaUrl + '" style="font-size:13px;color:#007da3;text-decoration:underline;">' + ctaText + '</a>';
+        html += '<a href="' + ctaUrl + '" style="font-size:13px;color:#007da3;text-decoration:none;">' + ctaText + '</a>';
         html += '</td></tr>';
       }
     }
@@ -575,118 +575,3 @@ document.addEventListener("DOMContentLoaded", () => {
       d.body = bodyInput.value || "";
       d.ctaText = ctaTextInput.value.trim() || "Explore more →";
       d.ctaUrl = ctaUrlInput.value.trim() || "https://example.com";
-      d.flipped = flip5050Input.checked;
-    } else if (type === "cards") {
-      const side = getCardSide();
-      d.left = d.left || {};
-      d.right = d.right || {};
-      const card = side === "right" ? d.right : d.left;
-      card.imageUrl = uploadedDataUrl || imageUrlInput.value.trim() || PLACEHOLDER_IMAGE;
-      card.title = titleInput.value.trim() || (side === "right" ? "Right card title" : "Left card title");
-      card.body = bodyInput.value || "";
-      card.ctaText = ctaTextInput.value.trim() || "View details →";
-      card.ctaUrl = ctaUrlInput.value.trim() || "https://example.com";
-    } else if (type === "spotlight") {
-      d.imageUrl = uploadedDataUrl || imageUrlInput.value.trim() || PLACEHOLDER_IMAGE;
-      d.eyebrow = eyebrowInput.value.trim() || "SPOTLIGHT";
-      d.title = titleInput.value.trim() || "Feature headline or key announcement";
-      d.body = bodyInput.value || "";
-      d.ctaText = ctaTextInput.value.trim() || "Read the full story →";
-      d.ctaUrl = ctaUrlInput.value.trim() || "https://example.com";
-      d.bgColor = spotlightBgColorInput.value.trim() || "#FBE232";
-    } else if (type === "feedback") {
-      d.title = titleInput.value.trim() || "We’d love your feedback";
-      d.body = bodyInput.value || "";
-      d.ctaText = ctaTextInput.value.trim() || "Share feedback →";
-      d.ctaUrl = ctaUrlInput.value.trim() || "https://example.com";
-    }
-
-    section.data = d;
-    imageFileInput.value = "";
-    renderList();
-    renderPreview();
-  }
-
-  // ---------- selection / delete ----------
-
-  function selectSection(id) {
-    selectedId = id;
-    const section = getSelectedSection();
-    renderList();
-
-    if (!section) {
-      currentSectionLabel.textContent = "Select a section card to edit its properties.";
-      editorForm.classList.add("hidden");
-      return;
-    }
-
-    currentSectionLabel.textContent = getSectionLabel(section);
-    editorForm.classList.remove("hidden");
-    updateEditorVisibility(section.type);
-    populateEditor(section);
-  }
-
-  function deleteSection(id) {
-    sections = sections.filter(s => s.id !== id);
-    if (selectedId === id) {
-      selectedId = null;
-      editorForm.classList.add("hidden");
-      currentSectionLabel.textContent = "Select a section card to edit its properties.";
-    }
-    renderList();
-    renderPreview();
-  }
-
-  // ---------- events ----------
-
-  addButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const type = btn.dataset.type;
-      if (!type) return;
-      const flipped = btn.dataset.flipped === "true";
-      const section = createSection(type, { flipped });
-      sections.push(section);
-      selectedId = section.id;
-      renderList();
-      renderPreview();
-      selectSection(section.id);
-    });
-  });
-
-  applyBtn.addEventListener("click", () => {
-    applyChanges();
-  });
-
-  cardSideInputs.forEach(input => {
-    input.addEventListener("change", () => {
-      const section = getSelectedSection();
-      if (section && section.type === "cards") {
-        populateEditor(section);
-      }
-    });
-  });
-
-  exportBtn.addEventListener("click", () => {
-    if (!sections.length) return;
-    const emailHtml = buildEmailHtml();
-    const fullHtml =
-      '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;">' +
-      emailHtml +
-      "</body></html>";
-
-    const blob = new Blob([fullHtml], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "newsletter.html";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  });
-
-  // initial
-  renderList();
-  renderPreview();
-});
