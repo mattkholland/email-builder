@@ -190,18 +190,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const ctaUrl = escapeHtml(cardData.ctaUrl || "");
 
     let html = "";
-    html += '<td width="50%" valign="top" style="padding:0 8px;">';
+    // 16px padding around each card
+    html += '<td width="50%" valign="top" style="padding:16px;">';
     html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">';
 
     if (img) {
-      // 4px between image and title comes from this 4px bottom padding
+      // 4px between image and title
       html += '<tr><td style="padding:0 0 4px;">';
       html += '<img src="' + img + '" alt="" style="display:block;width:100%;height:auto;border:0;" />';
       html += '</td></tr>';
     }
     if (title) {
-      // extra space below title for breathing room
-      html += '<tr><td style="padding:0 0 8px;">';
+      // 8px top + bottom padding for title cell
+      html += '<tr><td style="padding:8px 0 8px;">';
       html += '<h3 style="margin:0;font-size:15px;font-weight:bold;color:#111111;">' + title + '</h3>';
       html += '</td></tr>';
     }
@@ -259,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
       html += '<tr><td style="padding:0;">';
       html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">';
       html += '<tr><td style="padding:6px 16px;background-color:' + bg + ';text-align:left;vertical-align:middle;">';
-      html += '<span style="font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;color:#111111;">' + title + '</span>';
+      html += '<span style="font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:0.04em;color:#111111;">' + title + '</span>';
       html += '</td></tr></table></td></tr>';
     }
 
@@ -271,13 +272,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const ctaUrl = escapeHtml(d.ctaUrl || "");
       const flipped = !!d.flipped;
 
-      let imgTd = '<td width="50%" valign="top" style="padding:16px 12px;">';
+      // no 16px vertical padding; just horizontal
+      let imgTd = '<td width="50%" valign="top" style="padding:0 12px;">';
       if (img) {
         imgTd += '<img src="' + img + '" alt="" style="display:block;width:100%;height:auto;border:0;" />';
       }
       imgTd += '</td>';
 
-      let textTd = '<td width="50%" valign="top" style="padding:16px 12px;">';
+      let textTd = '<td width="50%" valign="top" style="padding:0 12px;">';
       if (title) {
         textTd += '<h2 style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#111111;">' + title + '</h2>';
       }
@@ -298,7 +300,8 @@ document.addEventListener("DOMContentLoaded", () => {
     else if (section.type === "cards") {
       const left = d.left || {};
       const right = d.right || {};
-      html += '<tr><td style="padding:16px 16px 16px;">';
+      // remove outer padding; cards themselves now have 16px padding
+      html += '<tr><td style="padding:0;">';
       html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>';
       html += buildCardColumn(left);
       html += buildCardColumn(right);
