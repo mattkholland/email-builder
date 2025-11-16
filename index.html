@@ -125,11 +125,26 @@
       </div>
     </aside>
 
-    <main>
-      <div id="list" class="cards"></div>
-      <div class="canvas">
-        <div class="email" id="preview"></div>
-      </div>
+    <!-- MAIN: section list on the left, preview on the right -->
+    <main class="builder-main">
+      <section class="section-list-panel">
+        <div class="panel-header">
+          <h2>Sections</h2>
+          <p>Drag to reorder</p>
+        </div>
+        <!-- Your existing cards list -->
+        <div id="list" class="cards"></div>
+      </section>
+
+      <section class="preview-panel">
+        <div class="panel-header">
+          <h2>Preview</h2>
+          <p>600px newsletter canvas</p>
+        </div>
+        <div class="canvas">
+          <div class="email" id="preview"></div>
+        </div>
+      </section>
     </main>
   </div>
 
