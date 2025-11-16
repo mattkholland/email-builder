@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const currentSectionLabel = document.getElementById("currentSection");
   const editorForm = document.getElementById("editor");
-  const applyBtn = document.getElementById("apply");
+  const applyBtn = document.getElementById("apply"); 
 
   // Editor inputs
   const imageFileInput = document.getElementById("imageFile");
