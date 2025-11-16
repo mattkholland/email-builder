@@ -375,25 +375,15 @@ textarea {
 
 /* The actual email markup container */
 .email-preview {
-  width: 600px;
-  max-width: 100%;
+  width: 100%;        /* was 600px */
+  max-width: 600px;   /* lock at 600 when there's room */
   margin: 0 auto;
 }
+
 /* Ensure the email table always fits inside the preview area */
 .email-preview table[role="presentation"] {
   width: 100% !important;
   max-width: 600px !important;
-}
-.canvas {
-  flex: 1;
-  background: #e5e7eb;
-  border-radius: 10px;
-  padding: 16px;
-  overflow: auto;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  max-width: 100%;
 }
 
 .placeholder {
