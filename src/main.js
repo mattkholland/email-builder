@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const currentSectionLabel = document.getElementById("currentSection");
   const editorForm = document.getElementById("editor");
-  const applyBtn = document.getElementById("apply"); 
+  const applyBtn = document.getElementById("apply");
 
   // Editor inputs
   const imageFileInput = document.getElementById("imageFile");
@@ -27,12 +27,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedId = null;
   let nextId = 1;
 
-const PLACEHOLDER_BANNER =
-  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iMjAwIj4KICA8cmVjdCB3aWR0aD0iNjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2U1ZTdlYiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIgogICAgICAgIGZvbnQtZmFtaWx5PSJBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSIjNmI3MjgwIj4KICAgIEJhbm5lciBpbWFnZQogIDwvdGV4dD4KPC9zdmc+";
-
-const PLACEHOLDER_IMAGE =
-  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyODAiIGhlaWdodD0iMTgwIj4KICA8cmVjdCB3aWR0aD0iMjgwIiBoZWlnaHQ9IjE4MCIgZmlsbD0iI2U1ZTdlYiIvPgogIDx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIgogICAgICAgIGZvbnQtZmFtaWx5PSJBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE2IiBmaWxsPSIjNmI3MjgwIj4KICAgIEltYWdlCiAgPC90ZXh0Pgo8L3N2Zz4=";
-
+  // Use local JPGs as "real" placeholders.
+  // Put these next to index.html or adjust paths as needed.
+  const PLACEHOLDER_BANNER = "placeholder-banner-600x200.jpg";
+  const PLACEHOLDER_IMAGE = "placeholder-image-280x180.jpg";
 
   // ---------- helpers: data ----------
 
@@ -109,6 +107,9 @@ const PLACEHOLDER_IMAGE =
           ctaUrl: "https://example.com"
         };
         break;
+      case "spacer":
+        data = {}; // just a 16px gap
+        break;
       case "footer":
         data = {};
         break;
@@ -128,6 +129,7 @@ const PLACEHOLDER_IMAGE =
       case "cards": return "Two Cards";
       case "spotlight": return "Spotlight";
       case "feedback": return "Feedback";
+      case "spacer": return "Spacer (16px)";
       case "footer": return "Footer";
       default: return "Section";
     }
@@ -233,7 +235,7 @@ const PLACEHOLDER_IMAGE =
       const ctaText = escapeHtml(d.ctaText || "");
       const ctaUrl = escapeHtml(d.ctaUrl || "");
 
-      html += '<tr><td style="padding:24px 24px 8px;">';
+      html += '<tr><td style="padding:16px 16px 8px;">';
       if (title) {
         html += '<h2 style="margin:0 0 8px;font-size:18px;font-weight:bold;color:#111111;">' + title + '</h2>';
       }
@@ -243,8 +245,8 @@ const PLACEHOLDER_IMAGE =
       html += '</td></tr>';
 
       if (ctaText && ctaUrl) {
-        html += '<tr><td style="padding:0 24px 24px;">';
-        html += '<a href="' + ctaUrl + '" style="display:inline-block;padding:10px 18px;margin-top:8px;font-size:14px;color:#ffffff;background-color:#007da3;text-decoration:none;border-radius:3px;">' + ctaText + '</a>';
+        html += '<tr><td style="padding:0 16px 16px;">';
+        html += '<a href="' + ctaUrl + '" style="font-size:14px;color:#007da3;text-decoration:underline;">' + ctaText + '</a>';
         html += '</td></tr>';
       }
     }
@@ -254,7 +256,7 @@ const PLACEHOLDER_IMAGE =
       const bg = escapeHtml(d.bgColor || "#FBE232");
       html += '<tr><td style="padding:0;">';
       html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">';
-      html += '<tr><td style="padding:10px 24px;background-color:' + bg + ';text-align:left;">';
+      html += '<tr><td style="padding:10px 16px;background-color:' + bg + ';text-align:left;">';
       html += '<span style="font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;color:#111111;">' + title + '</span>';
       html += '</td></tr></table></td></tr>';
     }
@@ -281,11 +283,11 @@ const PLACEHOLDER_IMAGE =
         textTd += '<p style="margin:0;font-size:14px;line-height:1.5;color:#444444;">' + body + '</p>';
       }
       if (ctaText && ctaUrl) {
-        textTd += '<div style="margin-top:10px;"><a href="' + ctaUrl + '" style="display:inline-block;padding:10px 18px;font-size:14px;color:#ffffff;background-color:#007da3;text-decoration:none;border-radius:3px;">' + ctaText + '</a></div>';
+        textTd += '<div style="margin-top:8px;"><a href="' + ctaUrl + '" style="font-size:14px;color:#007da3;text-decoration:underline;">' + ctaText + '</a></div>';
       }
       textTd += '</td>';
 
-      html += '<tr><td style="padding:0 24px;">';
+      html += '<tr><td style="padding:0 16px;">';
       html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>';
       html += flipped ? textTd + imgTd : imgTd + textTd;
       html += '</tr></table></td></tr>';
@@ -294,7 +296,7 @@ const PLACEHOLDER_IMAGE =
     else if (section.type === "cards") {
       const left = d.left || {};
       const right = d.right || {};
-      html += '<tr><td style="padding:16px 24px 24px;">';
+      html += '<tr><td style="padding:16px 16px 16px;">';
       html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>';
       html += buildCardColumn(left);
       html += buildCardColumn(right);
@@ -310,7 +312,7 @@ const PLACEHOLDER_IMAGE =
       const ctaUrl = escapeHtml(d.ctaUrl || "");
       const bg = escapeHtml(d.bgColor || "#FBE232");
 
-      html += '<tr><td style="padding:24px;background-color:' + bg + ';">';
+      html += '<tr><td style="padding:16px;background-color:' + bg + ';">';
       if (eyebrow) {
         html += '<div style="font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:0.08em;color:#111111;margin-bottom:6px;">' + eyebrow + '</div>';
       }
@@ -324,7 +326,7 @@ const PLACEHOLDER_IMAGE =
         html += '<p style="margin:0;font-size:14px;line-height:1.5;color:#111111;">' + body + '</p>';
       }
       if (ctaText && ctaUrl) {
-        html += '<div style="margin-top:12px;"><a href="' + ctaUrl + '" style="display:inline-block;padding:10px 18px;font-size:14px;color:#000000;background-color:#ffffff;text-decoration:none;border-radius:3px;">' + ctaText + '</a></div>';
+        html += '<div style="margin-top:8px;"><a href="' + ctaUrl + '" style="font-size:14px;color:#000000;text-decoration:underline;">' + ctaText + '</a></div>';
       }
       html += '</td></tr>';
     }
@@ -335,7 +337,7 @@ const PLACEHOLDER_IMAGE =
       const ctaText = escapeHtml(d.ctaText || "");
       const ctaUrl = escapeHtml(d.ctaUrl || "");
 
-      html += '<tr><td style="padding:24px 24px 8px;border-top:1px solid #e5e7eb;text-align:center;">';
+      html += '<tr><td style="padding:16px 16px 8px;border-top:1px solid #e5e7eb;text-align:center;">';
       if (title) {
         html += '<h3 style="margin:0 0 8px;font-size:16px;font-weight:bold;color:#111111;">' + title + '</h3>';
       }
@@ -345,14 +347,18 @@ const PLACEHOLDER_IMAGE =
       html += '</td></tr>';
 
       if (ctaText && ctaUrl) {
-        html += '<tr><td style="padding:0 24px 24px;text-align:center;">';
-        html += '<a href="' + ctaUrl + '" style="display:inline-block;padding:8px 14px;margin-top:8px;font-size:13px;color:#007da3;text-decoration:underline;">' + ctaText + '</a>';
+        html += '<tr><td style="padding:0 16px 16px;text-align:center;">';
+        html += '<a href="' + ctaUrl + '" style="font-size:13px;color:#007da3;text-decoration:underline;">' + ctaText + '</a>';
         html += '</td></tr>';
       }
     }
 
+    else if (section.type === "spacer") {
+      html += '<tr><td style="padding:0;height:16px;font-size:0;line-height:0;">&nbsp;</td></tr>';
+    }
+
     else if (section.type === "footer") {
-      html += '<tr><td style="padding:16px 24px 24px;border-top:1px solid #e5e7eb;text-align:left;">';
+      html += '<tr><td style="padding:16px 16px 16px;border-top:1px solid #e5e7eb;text-align:left;">';
       html += '<p style="margin:0;font-size:11px;line-height:1.4;color:#6b7280;">';
       html += 'You are receiving this email because you subscribed to our newsletter. ';
       html += 'If you no longer wish to receive these messages, you can update your preferences at any time.';
