@@ -4,151 +4,176 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Outlook Newsletter Builder</title>
-  <link rel="stylesheet" href="src/styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="topbar">
     <div class="wrap">
       <h1>Outlook Newsletter Builder</h1>
       <div class="actions">
-        <!-- Adders (approved set only) -->
-        <button data-add="banner" class="btn">+ Banner</button>
-        <button data-add="textonly" class="btn">+ Text-only</button>
-        <button data-add="divider" class="btn">+ Divider</button>
-        <button data-add="s5050" class="btn">+ 50/50</button>
-        <button data-add="s5050flip" class="btn">+ 50/50 (flipped)</button>
-        <button data-add="cards" class="btn">+ 2 Cards</button>
-        <button data-add="spotlight" class="btn">+ Spotlight</button>
-        <button data-add="footer" class="btn">+ Footer</button>
-        <button data-add="feedback" class="btn">+ Feedback</button>
+        <!-- Adders -->
+        <button class="btn" data-type="banner">+ Banner</button>
+        <button class="btn" data-type="text">+ Text-only</button>
+        <button class="btn" data-type="divider">+ Divider</button>
+        <button class="btn" data-type="fifty" data-flipped="false">+ 50/50</button>
+        <button class="btn" data-type="fifty" data-flipped="true">+ 50/50 (flipped)</button>
+        <button class="btn" data-type="cards">+ 2 Cards</button>
+        <button class="btn" data-type="spotlight">+ Spotlight</button>
+        <button class="btn" data-type="footer">+ Footer</button>
+        <button class="btn" data-type="feedback">+ Feedback</button>
         <!-- Export -->
-        <button id="exportHtml" class="btn btn-green">⤓ Export HTML</button>
+        <button id="exportHtml" class="btn btn-primary">⤓ Export HTML</button>
       </div>
     </div>
   </header>
 
   <div class="layout">
-    <aside>
+    <!-- Left: Properties panel -->
+    <aside class="properties">
       <h2>Section Properties</h2>
-      <div class="field">
-        <label>Selected Section</label>
-        <div id="currentSection" class="muted">None selected — click a card to edit.</div>
+      <div id="currentSection" class="muted">
+        Select a section card to edit its properties.
       </div>
 
-      <div id="editor" class="hidden">
-        <!-- Shared -->
-        <div class="field contextual title-field">
-          <label for="titleInput">Title</label>
-          <input type="text" id="titleInput" placeholder="[Title]">
-        </div>
-
-        <div class="field contextual eyebrow-field">
-          <label for="eyebrowInput">Eyebrow (SPOTLIGHT)</label>
-          <input type="text" id="eyebrowInput" placeholder="EYEBROW">
-        </div>
-
-        <div class="field contextual body-field">
-          <label for="bodyInput">Body</label>
-          <textarea id="bodyInput" rows="4" placeholder="[Body copy]"></textarea>
-        </div>
-
-        <div class="row contextual cta-row">
-          <div class="field">
-            <label for="ctaText">CTA text</label>
-            <input type="text" id="ctaText" placeholder="Learn more →">
-          </div>
-          <div class="field">
-            <label for="ctaUrl">CTA URL</label>
-            <input type="url" id="ctaUrl" placeholder="https://example.com">
-          </div>
-        </div>
-
-        <div class="field contextual divider-field">
-          <label for="dividerText">Divider label</label>
-          <input type="text" id="dividerText" placeholder="Section Title">
-        </div>
-
-        <div class="field contextual imgA-field">
+      <form id="editor" class="editor hidden" autocomplete="off">
+        <!-- Image (Banner, 50/50, Cards, Spotlight) -->
+        <div class="field-group" data-types="banner fifty cards spotlight">
           <label>Image</label>
-          <input type="file" id="imgAFile" accept="image/*">
-          <input type="url" id="imgAUrl" placeholder="or paste image URL">
-          <div class="hint">Tip: use either upload or URL.</div>
-        </div>
-
-        <div class="row contextual spotlight-colors">
           <div class="field">
-            <label for="bgColor">Background (SPOTLIGHT)</label>
-            <input type="text" id="bgColor" value="#fbe232">
+            <label class="field-label">Upload image</label>
+            <input type="file" id="imageFile" accept="image/*" />
           </div>
           <div class="field">
-            <label for="fgColor">Text color (SPOTLIGHT)</label>
-            <input type="text" id="fgColor" value="#000000">
+            <label class="field-label">Image URL</label>
+            <input type="url" id="imageUrl" placeholder="https://example.com/image.jpg" />
+          </div>
+          <div class="hint">Use either upload or URL.</div>
+        </div>
+
+        <!-- Eyebrow (Spotlight only) -->
+        <div class="field-group" data-types="spotlight">
+          <div class="field">
+            <label for="eyebrowInput" class="field-label">Eyebrow (Spotlight)</label>
+            <input type="text" id="eyebrowInput" placeholder="EYEBROW" />
           </div>
         </div>
 
-        <div class="field contextual flip-row">
-          <label>50/50 options</label>
-          <div class="checkbox">
-            <input type="checkbox" id="flip5050">
-            <label for="flip5050">Flip</label>
+        <!-- Title -->
+        <div class="field-group" data-types="text divider fifty cards spotlight feedback">
+          <div class="field">
+            <label for="titleInput" class="field-label">Title</label>
+            <input type="text" id="titleInput" placeholder="[Title]" />
           </div>
         </div>
 
-        <div class="field contextual cards-which">
-          <label>Edit which card?</label>
-          <div class="radio">
-            <label><input type="radio" name="cardWhich" value="1" checked> Card 1</label>
-            <label><input type="radio" name="cardWhich" value="2"> Card 2</label>
+        <!-- Body -->
+        <div class="field-group" data-types="text fifty cards spotlight feedback">
+          <div class="field">
+            <label for="bodyInput" class="field-label">Body</label>
+            <textarea id="bodyInput" rows="4" placeholder="[Body copy]"></textarea>
           </div>
         </div>
 
-        <div class="field">
-          <button id="apply" class="btn accent">Apply changes</button>
+        <!-- CTA (text + URL) -->
+        <div class="field-group" data-types="text fifty cards spotlight feedback">
+          <div class="field-row">
+            <div class="field">
+              <label for="ctaTextInput" class="field-label">CTA text</label>
+              <input type="text" id="ctaTextInput" placeholder="Learn more →" />
+            </div>
+            <div class="field">
+              <label for="ctaUrlInput" class="field-label">CTA URL</label>
+              <input type="url" id="ctaUrlInput" placeholder="https://example.com" />
+            </div>
+          </div>
         </div>
-      </div>
 
-      <hr>
-      <h2>Theme</h2>
-      <div class="row">
-        <div class="field">
-          <label for="accentColor">Divider color</label>
-          <input type="text" id="accentColor" value="#FBE232">
+        <!-- Divider title + background color -->
+        <div class="field-group" data-types="divider">
+          <div class="field">
+            <label for="dividerTitleInput" class="field-label">Divider title</label>
+            <input type="text" id="dividerTitleInput" placeholder="Section Title" />
+          </div>
+          <div class="field">
+            <label for="dividerBgColorInput" class="field-label">Divider background color</label>
+            <input type="text" id="dividerBgColorInput" value="#FBE232" />
+          </div>
         </div>
-      </div>
-      <div class="field">
-        <button id="applyTheme" class="btn">Apply Theme</button>
-      </div>
 
-      <div class="tiny muted">
-        Titles have 10px above/below. CTAs have 10px above. Spotlight CTAs are black; others use #007da3.
-        Email width is locked to 600px. Banner is 600×200. 2-Col gaps use a spacer column to avoid border overlap.
-      </div>
+        <!-- Spotlight background -->
+        <div class="field-group" data-types="spotlight">
+          <div class="field">
+            <label for="spotlightBgColorInput" class="field-label">Spotlight background color</label>
+            <input type="text" id="spotlightBgColorInput" value="#FBE232" />
+          </div>
+        </div>
+
+        <!-- 50/50 flip toggle -->
+        <div class="field-group" data-types="fifty">
+          <div class="field">
+            <label class="field-label">Image position</label>
+            <label class="toggle">
+              <span class="toggle-label">Image left</span>
+              <input type="checkbox" id="flip5050" />
+              <span class="toggle-switch"></span>
+              <span class="toggle-label">Image right</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Two Cards: which card -->
+        <div class="field-group" data-types="cards">
+          <div class="field">
+            <label class="field-label">Edit which card?</label>
+            <div class="radio-row">
+              <label>
+                <input type="radio" name="cardSide" value="left" checked />
+                Left card
+              </label>
+              <label>
+                <input type="radio" name="cardSide" value="right" />
+                Right card
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <button type="button" id="apply" class="btn btn-primary full-width">
+            Apply changes
+          </button>
+        </div>
+      </form>
     </aside>
 
-    <!-- MAIN: section list on the left, preview on the right -->
+    <!-- Right: Sections + Preview -->
     <main class="builder-main">
+      <!-- Section list -->
       <section class="section-list-panel">
         <div class="panel-header">
           <h2>Sections</h2>
-          <p>Drag to reorder</p>
+          <p>Click a card to edit. Use the trash icon to delete.</p>
         </div>
-        <!-- Your existing cards list -->
         <div id="list" class="cards"></div>
       </section>
 
+      <!-- Preview -->
       <section class="preview-panel">
         <div class="panel-header">
           <h2>Preview</h2>
-          <p>600px newsletter canvas</p>
+          <p>Exact 600px output</p>
         </div>
         <div class="canvas">
-          <div class="email" id="preview"></div>
+          <div id="preview" class="email-preview">
+            <p class="placeholder">
+              Add sections to see a live preview.
+            </p>
+          </div>
         </div>
       </section>
     </main>
   </div>
 
-  <script src="src/schema.js"></script>
-  <script src="src/main.js"></script>
+  <script src="main.js" defer></script>
 </body>
 </html>
