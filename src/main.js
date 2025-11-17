@@ -273,24 +273,23 @@ document.addEventListener("DOMContentLoaded", () => {
       const flipped = !!d.flipped;
 
       // no 16px vertical padding; just horizontal
-    let imgTd = '<td width="50%" valign="top" style="padding:0;">';
+ let imgTd = '<td width="50%" valign="top" style="padding:16px;">';
+if (img) {
+  imgTd += '<img src="' + img + '" alt="" style="display:block;width:100%;height:auto;border:0;" />';
+}
+imgTd += '</td>';
 
-      if (img) {
-        imgTd += '<img src="' + img + '" alt="" style="display:block;width:100%;height:auto;border:0;" />';
-      }
-      imgTd += '</td>';
-
-  let textTd = '<td width="50%" valign="top" style="padding:0;">';
-      if (title) {
-        textTd += '<h2 style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#111111;">' + title + '</h2>';
-      }
-      if (body) {
-        textTd += '<p style="margin:0;font-size:14px;line-height:1.5;color:#444444;">' + body + '</p>';
-      }
-      if (ctaText && ctaUrl) {
-        textTd += '<div style="margin-top:8px;"><a href="' + ctaUrl + '" style="font-size:14px;color:#007da3;text-decoration:none;">' + ctaText + '</a></div>';
-      }
-      textTd += '</td>';
+let textTd = '<td width="50%" valign="top" style="padding:16px;">';
+if (title) {
+  textTd += '<h2 style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#111111;">' + title + '</h2>';
+}
+if (body) {
+  textTd += '<p style="margin:0;font-size:14px;line-height:1.5;color:#444444;">' + body + '</p>';
+}
+if (ctaText && ctaUrl) {
+  textTd += '<div style="margin-top:8px;"><a href="' + ctaUrl + '" style="font-size:14px;color:#007da3;text-decoration:none;">' + ctaText + '</a></div>';
+}
+textTd += '</td>';
 
       html += '<tr><td style="padding:0 16px;">';
       html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>';
