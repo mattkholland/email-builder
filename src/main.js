@@ -257,11 +257,15 @@ document.addEventListener("DOMContentLoaded", () => {
     else if (section.type === "divider") {
       const title = escapeHtml(d.title || "");
       const bg = escapeHtml(d.bgColor || "#FBE232");
-      html += '<tr><td style="padding:0;">';
+      html += '<tr><td style="padding:16px 0;">';
       html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">';
       html += '<tr><td style="padding:6px 16px;background-color:' + bg + ';text-align:left;vertical-align:middle;">';
       html += '<span style="font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:0.04em;color:#111111;">' + title + '</span>';
       html += '</td></tr></table></td></tr>';
+
+
+
+      
     }
 
     else if (section.type === "fifty") {
@@ -291,7 +295,7 @@ if (ctaText && ctaUrl) {
 }
 textTd += '</td>';
 
-      html += '<tr><td style="padding:0 16px;">';
+      html += '<tr><td style="padding:0;">';
       html += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr>';
       html += flipped ? textTd + imgTd : imgTd + textTd;
       html += '</tr></table></td></tr>';
